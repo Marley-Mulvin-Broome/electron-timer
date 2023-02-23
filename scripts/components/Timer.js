@@ -19,6 +19,8 @@ class Timer {
   #displaySpan;
   #curTime = null;
 
+  #audioElement;
+
   /**
    * Creates a new timer object. This includes a container and the spans inside it
    * @param {HTMLElement} parent Element that will be parent to the timer component
@@ -31,9 +33,12 @@ class Timer {
     this.#isSelected = false;
     this.#selectedIndex = Timer.STARTING_INDEX;
     this.#displaySpan = document.createElement("span");
+    this.#displaySpan.classList.add("timer-display");
     this.#hideDisplay();
     this.#container.appendChild(this.#displaySpan);
     this.#spans = [];
+    this.#audioElement = new Audio("timeraudio.mp3");
+    this.#audioElement.loop = true;
   
     for (let i = 0; i < 9; i++) {
       const isValue = (i + 1) % 3 !== 0;
@@ -60,6 +65,8 @@ class Timer {
     parent.appendChild(this.#container);
 
     this.activateSpan(this.#selectedIndex);
+
+    this.#hideSelected();
   }
 
   toggle() {
@@ -91,7 +98,7 @@ class Timer {
       }
 
       if (Timer.timeIsZero(this.#curTime)) {
-        this.stop();
+        this.stop(false);
         return;
       }
 
@@ -106,7 +113,7 @@ class Timer {
     this.#paused = !this.#paused;
   }
 
-  stop() {
+  stop(suppressSound = true) {
     if (!this.started) {
       console.error("Error when stopping timer: cannot stop timer that has not been started");
       return;
@@ -117,6 +124,10 @@ class Timer {
     this.#hideDisplay();
     // stop timer
     clearInterval(this.#intervalObject);
+
+    if (!suppressSound) {
+      this.#audioElement.play();
+    }
 
     this.#started = false;
   }
@@ -134,9 +145,11 @@ class Timer {
 
     if (!value) {
       this.#container.classList.remove("timer-selected");
+      this.#hideSelected();
       return;
     } 
 
+    this.#showSelected();
     this.#container.classList.add("timer-selected");
   }
 
@@ -306,36 +319,13 @@ class Timer {
     return this.#parseUnitAt(firstIndex);
   }
 
-  /*
-  #getEmptySpans() {
-    const emptySpans = [];
+  #hideSelected() {
+    this.#spans[this.#selectedIndex].classList.remove("timer-active");
+  }
 
-    let lastIndexEmpty = false;
-
-    this.#spans.every((span, index) => {
-      if (this.#isSpanUnitIndicator(span)) {
-        lastIndexEmpty = false;
-        return true;
-      }
-
-
-      if (this.keyIsDigit(this.span.innerText) && lastIndexEmpty) {
-        emptySpans.add(span, span[index - 1]);
-        lastIndexEmpty = false;
-        return true;
-      }
-
-      let spanValue = parseInt(span.innerText);
-
-      if (spanValue === 0) {
-        lastIndexEmpty = true;
-      } else {
-        return false;
-      }
-
-      return true;
-    });
-  }*/
+  #showSelected() {
+    this.#spans[this.#selectedIndex].classList.add("timer-active");
+  }
 
   #countdown() {
     this.#curTime.setSeconds(this.#curTime.getSeconds() - 1);
@@ -392,9 +382,7 @@ class Timer {
 
     // assumes unit is at very left to start
     // can be changed with % determining
-
-    //console.log("Getting unit at: ", (10 * this.#parsedIndex(index)) + this.#parsedIndex(index + 1));
-
+    // THIS WORKS
     return (10 * this.#parsedIndex(index)) + this.#parsedIndex(index + 1);
   }
 
@@ -435,14 +423,25 @@ class Timer {
   }
 
   #parseCurrentTime() {
-    let curTime = new Date(0);
+
+    const times = [
+      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_HOUR), Timer.TIME_HOUR),
+      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_MINUTE), Timer.TIME_MINUTE),
+      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_SECOND), Timer.TIME_SECOND)
+    ];
+
+    let time = 0;
+
+    times.forEach((t) => {
+      time += t;
+    });
+
+    console.log("", time);
+    console.log("MAX", Number.MAX_SAFE_INTEGER);
     
-    curTime.setHours(
-      this.getUnitTime(Timer.TIME_HOUR),
-      this.getUnitTime(Timer.TIME_MINUTE),
-      this.getUnitTime(Timer.TIME_SECOND),
-      0
-    );
+    let curTime = new Date(time);
+
+    console.log(curTime);
 
 
     return curTime;
@@ -543,29 +542,52 @@ class Timer {
   }
 
   static formatTime(dateTime) {
-    let hours = dateTime.getHours();
+    let hours = dateTime.getUTCHours();
     let minutes = dateTime.getMinutes();
     let seconds = dateTime.getSeconds();
 
     let formatString = "";
 
-    let previousNotZero = false;
+    let doHours = false;
+    let doMinutes = false;
 
     if (hours !== 0) {
+      doHours = true;
+      doMinutes = true;
+    } else if (minutes !== 0) {
+      doMinutes = true;
+    }
+
+    if (doHours) {  
       formatString += hours + "h";
-      previousNotZero = true;
-    } else if (minutes !== 0 || previousNotZero) {
+
+    }
+
+    if (doMinutes) {
       formatString += minutes + "m";
     }
 
-    formatString += seconds + "s";
 
+    formatString += seconds + "s";
 
     return formatString;
   }
 
   static timeIsZero(dateTime) {
     return dateTime.getHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
+  }
+
+  static timeToMilliseconds(time, unit) {
+    switch (unit) {
+      case Timer.TIME_HOUR:
+        return ((time * 60) * 60) * 1000;
+
+      case Timer.TIME_MINUTE:
+        return (time * 60) * 1000;
+
+      case Timer.TIME_SECOND:
+        return time * 1000;
+    }
   }
 }
 

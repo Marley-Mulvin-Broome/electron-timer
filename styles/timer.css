@@ -1,11 +1,55 @@
+:root {
+    --timer-font-size: 5em;
+}
+
+@keyframes selecttimer {
+    from {
+        box-shadow: none;
+    }
+
+    to {
+        box-shadow: var(--selection-box-shadow);
+    }
+}
+
+@keyframes fadeinselection {
+
+    from {
+        border: none;
+        background-color: var(--dark-style-bg);
+    }
+
+    to {
+        border-bottom: white solid 1px;
+        background-color: var(--dark-style-highlight);
+    }
+}
+
 /* The container being selected */
 .timer-selected {
-    border: solid red 3px;
+    animation-name: selecttimer;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    box-shadow: var(--selection-box-shadow);
+
 }
 
 /* The individual span being selected */
 .timer-active {
-    border: solid red 3px;
+    border-bottom: white solid 1px;
+    background-color: var(--dark-style-highlight);
+
+    animation-name: fadeinselection;
+    animation-duration: 0.2s;
+}
+
+.timer-container {
+    color: #FFF;
+    width: 26em;
+
+    text-align: center;
+
+    padding: 5%;
 }
 
 .timer-container span:hover, .timer-container:hover {
@@ -14,4 +58,17 @@
 
 .timer-hidden {
     display: none;
+}
+
+.timer-digit {
+    font-size: var(--timer-font-size);
+}
+
+.timer-unit {
+    font-size: calc(var(--timer-font-size) - 1);
+}
+
+.timer-display {
+    font-size: var(--timer-font-size);
+
 }
