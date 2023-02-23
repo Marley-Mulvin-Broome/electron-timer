@@ -11,3 +11,7 @@
 .timer-container span:hover, .timer-container:hover {
     cursor: pointer;
 }
+
+.timer-hidden {
+    display: none;
+}

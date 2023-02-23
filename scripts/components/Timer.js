@@ -2,6 +2,7 @@ class Timer {
   static TIME_SECOND = 's';
   static TIME_MINUTE = 'm';
   static TIME_HOUR   = 'h';
+  static ONE_SECOND = 1000;
 
   static STARTING_INDEX = 7;
 
@@ -11,6 +12,12 @@ class Timer {
   #selectedIndex;
   #isSelected;
   #container;
+  #started = false;
+  #intialTime = null;
+  #paused = false;
+  #intervalObject = null;
+  #displaySpan;
+  #curTime = null;
 
   /**
    * Creates a new timer object. This includes a container and the spans inside it
@@ -23,6 +30,9 @@ class Timer {
 
     this.#isSelected = false;
     this.#selectedIndex = Timer.STARTING_INDEX;
+    this.#displaySpan = document.createElement("span");
+    this.#hideDisplay();
+    this.#container.appendChild(this.#displaySpan);
     this.#spans = [];
   
     for (let i = 0; i < 9; i++) {
@@ -50,6 +60,65 @@ class Timer {
     parent.appendChild(this.#container);
 
     this.activateSpan(this.#selectedIndex);
+  }
+
+  toggle() {
+    if (this.started) {
+      this.stop();
+      return;
+    }
+
+    this.start();
+  }
+
+  start() {
+    if (this.started) {
+      console.error("Error when starting timer: cannot start a timer that is already started!");
+      return;
+    }
+
+    // set the initialTime to whatever is in the input
+    this.#intialTime = this.time;
+    this.#curTime = this.time;
+    // change to the display
+    this.hideSpans();
+    this.#updateDisplay();
+    this.#showDisplay();
+    // start a countdown for every one second
+    this.#intervalObject = setInterval(() => {
+      if (this.#paused) {
+        return;
+      }
+
+      if (Timer.timeIsZero(this.#curTime)) {
+        this.stop();
+        return;
+      }
+
+      this.#countdown();
+      this.#updateDisplay();
+    }, Timer.ONE_SECOND);
+
+    this.#started = true;
+  }
+
+  pause() {
+    this.#paused = !this.#paused;
+  }
+
+  stop() {
+    if (!this.started) {
+      console.error("Error when stopping timer: cannot stop timer that has not been started");
+      return;
+    }
+
+    // bring back all the spans
+    this.showSpans();
+    this.#hideDisplay();
+    // stop timer
+    clearInterval(this.#intervalObject);
+
+    this.#started = false;
   }
 
   /**
@@ -110,6 +179,10 @@ class Timer {
     return index >= 0 && index < this.#spans.length;
   }
 
+  indexBounded(index) {
+    return (index + 1) % 3 !== 0;
+  }
+
   activateSpan(index) {
     if (this.#inboundsError(index, "activating span")) {
       return;
@@ -131,6 +204,74 @@ class Timer {
     this.activateSpan(index);
   }
 
+  hideSpan(index) {
+    if (isElement(index)) {
+      index.classList.add("timer-hidden");
+      return;
+    }
+
+    if (this.#inboundsError(index, "hiding span")) {
+      return;
+    }
+
+    this.#spans[index].classList.add("timer-hidden");
+  }
+
+  showSpan(index) {
+    if (isElement(index)) {
+      index.classList.remove("timer-hidden");
+      return;
+    }
+
+    if (this.#inboundsError(index, "showing span")) {
+      return;
+    }
+
+    this.#spans[index].classList.remove("timer-hidden");
+  }
+
+  hideSpans(spans = null) {
+    if (spans === null) {
+      spans = this.#spans;
+    }
+
+    if (!Array.isArray(spans)) {
+      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`)
+      return;
+    }
+
+    if (spans.length === 0) {
+      console.warn("Called hide spans function with 0 spans");
+      return;
+    } 
+
+    spans.forEach((span) => {
+      this.hideSpan(span);
+    });
+  }
+
+  showSpans(spans = null) {
+    if (spans === null) {
+      spans = this.#spans;
+    }
+
+    if (!Array.isArray(spans)) {
+      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`)
+      return;
+    }
+
+    if (spans.length === 0) {
+      console.warn("Called hide spans function with 0 spans");
+      return;
+    } 
+
+    spans.forEach((span) => {
+      this.showSpan(span);
+    });
+  }
+
+  
+
   /**
    * Feeds in input from an external source into this component
    * @param {String} key key property from event.key
@@ -150,10 +291,117 @@ class Timer {
     this.#spans[this.#selectedIndex].innerText = digit;
   }
 
+  getUnitTime(unit) {
+    let firstIndex = 0;
+
+    switch (unit) {
+      case Timer.TIME_MINUTE:
+        firstIndex = 3;
+        break;
+      case Timer.TIME_SECOND:
+        firstIndex = 6;
+        break;
+    }
+
+    return this.#parseUnitAt(firstIndex);
+  }
+
+  /*
+  #getEmptySpans() {
+    const emptySpans = [];
+
+    let lastIndexEmpty = false;
+
+    this.#spans.every((span, index) => {
+      if (this.#isSpanUnitIndicator(span)) {
+        lastIndexEmpty = false;
+        return true;
+      }
+
+
+      if (this.keyIsDigit(this.span.innerText) && lastIndexEmpty) {
+        emptySpans.add(span, span[index - 1]);
+        lastIndexEmpty = false;
+        return true;
+      }
+
+      let spanValue = parseInt(span.innerText);
+
+      if (spanValue === 0) {
+        lastIndexEmpty = true;
+      } else {
+        return false;
+      }
+
+      return true;
+    });
+  }*/
+
+  #countdown() {
+    this.#curTime.setSeconds(this.#curTime.getSeconds() - 1);
+  }
+
+  #toggleDisplay() {
+    if (this.#displaySpan.classList.contains("timer-hidden")) {
+      this.#showDisplay();
+      return;
+    }
+
+    this.#hideDisplay();
+  }
+
+  #updateDisplay(timeObject = undefined) {
+    let time = timeObject;
+
+    if (time === undefined) {
+      time = this.#curTime;
+    }
+
+    this.#displaySpan.innerText = Timer.formatTime(time);
+  }
+
+  #showDisplay() {
+    this.#displaySpan.classList.remove("timer-hidden")
+  }
+
+  #hideDisplay() {
+    this.#displaySpan.classList.add("timer-hidden")
+
+  }
+
+  #isSpanUnitIndicator(span) {
+    if (Object.is(span)) {
+      return !this.keyIsDigit(span.innerText);
+    }
+
+    return !this.keyIsDigit(this.#spans[span].innerText);
+  }
+
+  #parsedIndex(index) {
+    if (this.#inboundsError(index, "parsing index") || this.#boundsError("parsing index")) {
+      return;
+    }
+
+    return parseInt(this.#spans[index].innerText);
+  }
+
+  #parseUnitAt(index) {
+    if (this.#inboundsError(index, "parsing unit time") || this.#boundsError("parsing unit time")) {
+      return;
+    }
+
+    // assumes unit is at very left to start
+    // can be changed with % determining
+
+    //console.log("Getting unit at: ", (10 * this.#parsedIndex(index)) + this.#parsedIndex(index + 1));
+
+    return (10 * this.#parsedIndex(index)) + this.#parsedIndex(index + 1);
+  }
+
   #shiftLeft(endIndex = -1) {
-    this.#spans.forEach((span, index) => {
+    this.#spans.every((span, index) => {
       if (endIndex !== -1 && index > endIndex) {
-        return;
+        return false;
       }
 
       if (Timer.keyIsDigit(span.innerText) && index !== 0) {
@@ -165,7 +413,16 @@ class Timer {
         
         this.#spans[leftIndex].innerText = this.#spans[index].innerText;
       }
+
+      return true;
     });
+  }
+
+  #boundsError(index, msg="") {
+    if (!this.indexBounded(index)) {
+      console.error(`Error with ${msg} in timer object: index is a unit indicator not digit (${index})`)
+      return true;
+    }
   }
 
   #inboundsError(index, msg="operation") {
@@ -175,6 +432,20 @@ class Timer {
     }
 
     return false;
+  }
+
+  #parseCurrentTime() {
+    let curTime = new Date(0);
+    
+    curTime.setHours(
+      this.getUnitTime(Timer.TIME_HOUR),
+      this.getUnitTime(Timer.TIME_MINUTE),
+      this.getUnitTime(Timer.TIME_SECOND),
+      0
+    );
+
+
+    return curTime;
   }
 
   /**
@@ -198,6 +469,8 @@ class Timer {
 
     this.setActiveSpan(this.#selectedIndex, prevIndex);
   }
+
+  
   
   /**
    * Sets whether the timer itself is selected
@@ -217,6 +490,14 @@ class Timer {
   
   get currentTimerSpan() {
     return this.#spans[selectedIndex];
+  }
+
+  get started() {
+    return this.#started;
+  }
+
+  get time() {
+    return this.#parseCurrentTime();
   }
 
   /**
@@ -260,7 +541,35 @@ class Timer {
   static keyIsDigit(key) {
     return !isNaN(key);
   }
+
+  static formatTime(dateTime) {
+    let hours = dateTime.getHours();
+    let minutes = dateTime.getMinutes();
+    let seconds = dateTime.getSeconds();
+
+    let formatString = "";
+
+    let previousNotZero = false;
+
+    if (hours !== 0) {
+      formatString += hours + "h";
+      previousNotZero = true;
+    } else if (minutes !== 0 || previousNotZero) {
+      formatString += minutes + "m";
+    }
+
+    formatString += seconds + "s";
+
+
+    return formatString;
+  }
+
+  static timeIsZero(dateTime) {
+    return dateTime.getHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
+  }
 }
+
+
 
 //export { Timer };
 
