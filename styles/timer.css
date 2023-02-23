@@ -1,3 +1,13 @@
+/* The container being selected */
+.timer-selected {
+    border: solid red 3px;
+}
+
+/* The individual span being selected */
 .timer-active {
     border: solid red 3px;
+}
+
+.timer-container span:hover, .timer-container:hover {
+    cursor: pointer;
 }

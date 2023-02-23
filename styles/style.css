@@ -1,0 +1,13 @@
+:root {
+    --dark-style-bg: #292c34;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url('../fonts/Roboto-Medium.ttf');
+}
+
+body {
+    background-color: var(--dark-style-bg);
+    font-family: "Roboto";
+}
