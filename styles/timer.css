@@ -148,6 +148,10 @@
     position: relative;
 }
 
+.timer-button:focus {
+    outline: none;
+}
+
 .timer-button:hover {
     cursor:pointer;
 }

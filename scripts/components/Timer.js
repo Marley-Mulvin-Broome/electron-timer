@@ -73,6 +73,10 @@ class Timer {
 
     [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
       () => {
+        if (!this.selected) {
+          return;
+        }
+
         if (!this.started) {
           this.start();
           return;
@@ -81,6 +85,10 @@ class Timer {
         this.pause();
       },
       () => {
+        if (!this.selected) {
+          return;
+        }
+
         if (this.started) {
           this.reset();
           return;
@@ -617,6 +625,10 @@ class Timer {
 
   set onfocus(callback) {
     this.#container.onfocus = callback;
+  }
+
+  get selected() {
+    return this.#isSelected;
   }
 
   get currentIndex() {
