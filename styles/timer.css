@@ -45,6 +45,11 @@
     animation-iteration-count: 1;
     box-shadow: var(--selection-box-shadow);
     position: relative;
+
+}
+
+.timer-selected:hover {
+    cursor: default;
 }
 
 .timer-selected:after {
@@ -82,7 +87,7 @@
     height: 120px;
 }
 
-.timer-container span:hover, .timer-container:hover {
+ .timer-container:hover:not(.timer-selected) {
     cursor: pointer;
 }
 
@@ -100,4 +105,13 @@
 
 .timer-display {
     font-size: var(--timer-font-size);
+}
+
+/*
+    Buttons
+*/
+
+.timer-button {
+    background: none;
+    border: none;
 }
