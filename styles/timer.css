@@ -27,13 +27,8 @@
 
 @keyframes grow-bottom-border {
     0% {
-        left: 0%;
         width: 0%;
-    }
-
-    50% {
-        width: 50%;
-        left: 25%;
+        left: 50%;
     }
 
     100% {
@@ -52,15 +47,17 @@
     position: relative;
 }
 
-.timer-selected:before {
+.timer-selected:after {
     content: "";
     position: absolute;
+    border-bottom: #ffb2ff 1px solid;
+    
     bottom: 0;
     height: 15px;
     width: 100%;
     left: 0%;
-    border-bottom: #ffb2ff 1px solid;
 
+    
     animation-name: grow-bottom-border;
     animation-duration: 0.5s;
 }
