@@ -1,8 +1,9 @@
 class Timer {
-  static TIME_SECOND = 's';
-  static TIME_MINUTE = 'm';
-  static TIME_HOUR   = 'h';
-  static ONE_SECOND = 1000;
+  static TIME_SECOND  = 's';
+  static TIME_MINUTE  = 'm';
+  static TIME_HOUR    = 'h';
+  static TIME_UNITS   = [ Timer.TIME_SECOND, Timer.TIME_MINUTE, Timer.TIME_HOUR ]
+  static ONE_SECOND   = 1000;
 
   static STARTING_INDEX = 7;
 
@@ -351,6 +352,26 @@ class Timer {
     this.#shiftRight(this.#selectedIndex);
   }
 
+  formatDisplayElement(dateTime) {
+    let baseString = Timer.formatTime(dateTime);
+  
+    let currentElement = document.createElement("span");
+
+    this.#displaySpan.innerHTML = "";
+
+    for (let i = 0; i < baseString.length; i++) {
+      if (Timer.TIME_UNITS.includes(baseString[i])) {
+        this.#displaySpan.appendChild(currentElement);
+        this.#displaySpan.appendChild(Timer.createDisplayUnit(baseString[i]));
+        if (i + 1 != baseString.length) {
+          currentElement = document.createElement("span");
+        }
+      } else {
+        currentElement.innerHTML += baseString[i];
+      }
+    }
+  }
+
   #hideSelected() {
     this.#spans[this.#selectedIndex].classList.remove("timer-active");
   }
@@ -379,7 +400,7 @@ class Timer {
       time = this.#curTime;
     }
 
-    this.#displaySpan.innerText = Timer.formatTime(time);
+    this.formatDisplayElement(time);
   }
 
   #showDisplay() {
@@ -625,6 +646,8 @@ class Timer {
     return formatString;
   }
 
+  
+
   static timeIsZero(dateTime) {
     return dateTime.getUTCHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
   }
@@ -640,6 +663,21 @@ class Timer {
       case Timer.TIME_SECOND:
         return time * 1000;
     }
+  }
+
+  static createDisplaySpan() {
+    const span = document.createElement("span");
+    span.classList.add("timer-display");
+
+    return span;
+  }
+
+  static createDisplayUnit(unit) {
+    const span = document.createElement("span");
+    span.classList.add("timer-display-unit");
+    span.innerText = unit;
+
+    return span;
   }
 }
 
