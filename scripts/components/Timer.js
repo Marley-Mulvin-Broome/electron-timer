@@ -30,7 +30,7 @@ class Timer {
    * Creates a new timer object. This includes a container and the spans inside it
    * @param {HTMLElement} parent Element that will be parent to the timer component
    */
-  constructor(parent) {
+  constructor(parent, tabindex=-1) {
     
     this.#container = document.createElement("div");
     this.#container.classList.add("timer-container");
@@ -44,6 +44,7 @@ class Timer {
     this.#spans = [];
     this.#audioElement = new Audio("timeraudio.mp3");
     this.#audioElement.loop = false;
+    this.#container.setAttribute("tabindex", tabindex);
     
   
     for (let i = 0; i < 9; i++) {
@@ -381,6 +382,10 @@ class Timer {
       this.selectPrevious();
     } else if (key === "Backspace") { 
       this.backspace();
+    } else if (key === "Enter" ) {
+      if (!this.started) {
+        this.start();
+      }
     } else if (Timer.keyIsDigit(key)) {
       this.insertDigit(parseInt(key));
     }
@@ -610,6 +615,10 @@ class Timer {
     this.#container.onclick = callback;
   }
 
+  set onfocus(callback) {
+    this.#container.onfocus = callback;
+  }
+
   get currentIndex() {
     return this.#selectedIndex;
   }
@@ -746,11 +755,13 @@ class Timer {
     startButton.classList.add("timer-start-button", "timer-button");
     startButton.innerText = "Start";
     startButton.addEventListener("click", onClickStart);
+    startButton.setAttribute("tabindex", "-1");
 
     const resetButton = document.createElement("button");
     resetButton.classList.add("timer-reset-button", "timer-button");
     resetButton.innerText = "Reset";
     resetButton.addEventListener("click", onClickStop);
+    resetButton.setAttribute("tabindex", "-1");
 
     container.appendChild(startButton);
     container.appendChild(resetButton)
