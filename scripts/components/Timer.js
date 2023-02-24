@@ -38,7 +38,7 @@ class Timer {
     this.#container.appendChild(this.#displaySpan);
     this.#spans = [];
     this.#audioElement = new Audio("timeraudio.mp3");
-    this.#audioElement.loop = true;
+    this.#audioElement.loop = false;
   
     for (let i = 0; i < 9; i++) {
       const isValue = (i + 1) % 3 !== 0;
@@ -69,6 +69,9 @@ class Timer {
     this.#hideSelected();
   }
 
+  /**
+   * Toggles whether this component is selected
+   */
   toggle() {
     if (this.started) {
       this.stop();
@@ -78,6 +81,9 @@ class Timer {
     this.start();
   }
 
+  /**
+   * Starts the timer
+   */
   start() {
     if (this.started) {
       console.error("Error when starting timer: cannot start a timer that is already started!");
@@ -109,10 +115,17 @@ class Timer {
     this.#started = true;
   }
 
+  /**
+   * Pauses the current timer
+   */
   pause() {
     this.#paused = !this.#paused;
   }
 
+  /**
+   * Stops the timer completely
+   * @param {Boolean} suppressSound whether to suppress the end timer audio
+   */
   stop(suppressSound = true) {
     if (!this.started) {
       console.error("Error when stopping timer: cannot stop timer that has not been started");
@@ -192,10 +205,19 @@ class Timer {
     return index >= 0 && index < this.#spans.length;
   }
 
+  /**
+   * Checks if a specific index is bounded (index of a numeric value)
+   * @param {Number} index the index to check if bounded
+   * @returns {Boolean} whether the index is bounded or not
+   */
   indexBounded(index) {
     return (index + 1) % 3 !== 0;
   }
 
+  /**
+   * Activates a span based on index
+   * @param {Number} index the index to activate
+   */
   activateSpan(index) {
     if (this.#inboundsError(index, "activating span")) {
       return;
@@ -204,6 +226,10 @@ class Timer {
     this.#spans[index].classList.add("timer-active");
   }
 
+  /**
+   * Deactivates a span based on index
+   * @param {Number} index the index to deactivate
+   */
   deactivateSpan(index) {
     if (this.#inboundsError(index, "deactivating span")) {
       return;
@@ -294,6 +320,8 @@ class Timer {
       this.selectNext();
     } else if (key === "ArrowLeft") {
       this.selectPrevious();
+    } else if (key === "Backspace") { 
+      this.backspace();
     } else if (Timer.keyIsDigit(key)) {
       this.insertDigit(parseInt(key));
     }
@@ -317,6 +345,10 @@ class Timer {
     }
 
     return this.#parseUnitAt(firstIndex);
+  }
+
+  backspace() {
+    this.#shiftRight(this.#selectedIndex);
   }
 
   #hideSelected() {
@@ -406,6 +438,27 @@ class Timer {
     });
   }
 
+  #shiftRight(endIndex = -1) {
+    if (endIndex === -1) {
+      endIndex = this.#spans.length - 1;
+    }
+
+    for (let i = endIndex - 1; i >= 0; i--) {
+
+      if (!this.indexBounded(i)) {
+        continue;
+      }
+
+      const curSpan = this.#spans[i];
+      // need to make sure the next index is bounded so we dont overwrite a unit indicator
+      const prevSpan = this.#spans[Timer.getBoundedIndex(i + 1, this.#spans.length, i)];
+
+      prevSpan.innerText = curSpan.innerText;
+    }
+
+    this.#spans[0].innerText = "0";
+  }
+
   #boundsError(index, msg="") {
     if (!this.indexBounded(index)) {
       console.error(`Error with ${msg} in timer object: index is a unit indicator not digit (${index})`)
@@ -436,12 +489,7 @@ class Timer {
       time += t;
     });
 
-    console.log("", time);
-    console.log("MAX", Number.MAX_SAFE_INTEGER);
-    
     let curTime = new Date(time);
-
-    console.log(curTime);
 
 
     return curTime;
@@ -495,6 +543,9 @@ class Timer {
     return this.#started;
   }
 
+  /**
+   * The current time stored in the time spans (Not the current countdown time)
+   */
   get time() {
     return this.#parseCurrentTime();
   }
@@ -520,6 +571,7 @@ class Timer {
   
     return span;
   }
+
 
   static getBoundedIndex(index, spansLength, previousIndex) {
     if (index < 0) {
@@ -574,7 +626,7 @@ class Timer {
   }
 
   static timeIsZero(dateTime) {
-    return dateTime.getHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
+    return dateTime.getUTCHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
   }
 
   static timeToMilliseconds(time, unit) {
