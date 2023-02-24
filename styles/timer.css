@@ -84,7 +84,7 @@
     padding: 20px;
 
     width: 300px;
-    height: 120px;
+    height: 140px;
 }
 
  .timer-container:hover:not(.timer-selected) {
@@ -111,7 +111,72 @@
     Buttons
 */
 
+@keyframes timer-button-hover {
+    from {
+        background-color: rgba(255, 178, 255, 0);
+        color: #FFF;
+    }
+
+    to {
+        color: #000;
+        background-color: rgba(255, 255, 255, 1);
+    }
+}   
+
+.timer-container:not(.timer-selected) .timer-buttons-container {
+    opacity: 0.2;
+}
+
 .timer-button {
     background: none;
-    border: none;
+    border: 2px solid;
+    border-radius: 10px;
+
+    width: 100px;
+    height: 30px;
+
+    margin: 10px;
+
+    font-size: 1.3rem;
+
+    color: #FFF;
+
+    position: relative;
+}
+
+
+.timer-button:hover {
+    cursor:pointer;
+}
+
+.timer-reset-button {
+    border-color: white;
+
+    transition: background-color 0.3s ease-out;
+}
+
+.timer-selected .timer-buttons-container .timer-reset-button:hover {
+    color: #000;
+    background-color: rgba(255, 255, 255, 1);
+
+    transition: color 0.3s ease-in;
+    transition: background-color 0.3s ease-in;
+
+/* 
+    animation: timer-button-hover;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in; */
+}
+
+.timer-start-button {
+    background-color: #ffb2ff;
+    border-color: #ffb2ff;
+    transition: box-shadow 0.3s ease-in;
+    /* background: #ffb2ff; */
+}
+
+.timer-start-button:hover {
+
+    box-shadow: 0px 0px 10px 3px rgba(234,72,242,0.9);
+    transition: box-shadow 0.3s ease-out;
 }
