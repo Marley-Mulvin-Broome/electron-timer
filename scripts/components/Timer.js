@@ -20,6 +20,10 @@ class Timer {
   #displaySpan;
   #curTime = null;
 
+  #buttonContainer;
+  #buttonStart;
+  #buttonStop;
+
   #audioElement;
 
   /**
@@ -40,6 +44,7 @@ class Timer {
     this.#spans = [];
     this.#audioElement = new Audio("timeraudio.mp3");
     this.#audioElement.loop = false;
+    
   
     for (let i = 0; i < 9; i++) {
       const isValue = (i + 1) % 3 !== 0;
@@ -65,6 +70,26 @@ class Timer {
 
     parent.appendChild(this.#container);
 
+    [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
+      () => {
+        if (!this.started) {
+          this.start();
+          return;
+        }
+
+        this.pause();
+      },
+      () => {
+        if (this.started) {
+          this.reset();
+          return;
+        }
+
+        this.clearInput();
+      }
+    );
+    this.#container.appendChild(this.#buttonContainer);
+
     this.activateSpan(this.#selectedIndex);
 
     this.#hideSelected();
@@ -82,6 +107,18 @@ class Timer {
     this.start();
   }
 
+  clickStart() {
+    this.start();
+  }
+
+  clearInput() {
+    this.#spans.forEach((span, index) => {
+      if (this.indexBounded(index)) {
+        span.innerText = "0";
+      }
+    });
+  }
+
   /**
    * Starts the timer
    */
@@ -90,6 +127,9 @@ class Timer {
       console.error("Error when starting timer: cannot start a timer that is already started!");
       return;
     }
+
+    this.#buttonStop.innerText = "Stop";
+    this.#buttonStart.innerText = "Pause";
 
     // set the initialTime to whatever is in the input
     this.#intialTime = this.time;
@@ -121,6 +161,21 @@ class Timer {
    */
   pause() {
     this.#paused = !this.#paused;
+
+    if (this.#paused) {
+      this.#buttonStart.innerText = "Unpause";
+    } else {
+      this.#buttonStart.innerText = "Pause";
+    }
+  }
+
+  reset() {
+    if (!this.started) {
+      console.error("Error when resetting timer: can't reset started timer");
+      return;
+    }
+
+    this.stop();
   }
 
   /**
@@ -132,6 +187,9 @@ class Timer {
       console.error("Error when stopping timer: cannot stop timer that has not been started");
       return;
     }
+
+    this.#buttonStart.innerText = "Start";
+    this.#buttonStop.innerText = "Reset";
 
     // bring back all the spans
     this.showSpans();
@@ -678,6 +736,26 @@ class Timer {
     span.innerText = unit;
 
     return span;
+  }
+
+  static createButtons(onClickStart, onClickStop) {
+    const container = document.createElement("div");
+    container.classList.add("timer-buttons-container");
+    
+    const startButton = document.createElement("button");
+    startButton.classList.add("timer-start-button", "timer-button");
+    startButton.innerText = "Start";
+    startButton.addEventListener("click", onClickStart);
+
+    const resetButton = document.createElement("button");
+    resetButton.classList.add("timer-reset-button", "timer-button");
+    resetButton.innerText = "Reset";
+    resetButton.addEventListener("click", onClickStop);
+
+    container.appendChild(startButton);
+    container.appendChild(resetButton)
+
+    return [container, startButton, resetButton];
   }
 }
 

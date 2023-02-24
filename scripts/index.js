@@ -17,14 +17,6 @@ for (let i = 0; i < 10; i++) {
   timers[i].onclick = () => {
     selectTimer(timers[i]);
   }
-
-  const element = document.createElement("button");
-  element.innerText = "Toggle";
-  element.onclick = () => {
-    timers[i].toggle();
-  }
-
-  document.body.appendChild(element);
 }
 
 selectTimer(timers[0]);
