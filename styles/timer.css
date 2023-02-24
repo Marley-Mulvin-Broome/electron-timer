@@ -73,12 +73,13 @@
 
 .timer-container {
     color: #FFF;
-    width: 26em;
 
     text-align: center;
 
-    padding: 5%;
+    padding: 20px;
 
+    width: 300px;
+    height: 120px;
 }
 
 .timer-container span:hover, .timer-container:hover {
