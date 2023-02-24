@@ -1,5 +1,5 @@
 :root {
-    --timer-font-size: 5em;
+    --timer-font-size: 5rem;
 }
 
 @keyframes selecttimer {
@@ -25,13 +25,44 @@
     }
 }
 
+@keyframes grow-bottom-border {
+    0% {
+        left: 0%;
+        width: 0%;
+    }
+
+    50% {
+        width: 50%;
+        left: 25%;
+    }
+
+    100% {
+        width: 100%;
+        left: 0%;
+    }
+}
+
+
 /* The container being selected */
 .timer-selected {
     animation-name: selecttimer;
     animation-duration: 0.5s;
     animation-iteration-count: 1;
     box-shadow: var(--selection-box-shadow);
+    position: relative;
+}
 
+.timer-selected:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 15px;
+    width: 100%;
+    left: 0%;
+    border-bottom: #ffb2ff 1px solid;
+
+    animation-name: grow-bottom-border;
+    animation-duration: 0.5s;
 }
 
 /* The individual span being selected */
@@ -50,6 +81,7 @@
     text-align: center;
 
     padding: 5%;
+
 }
 
 .timer-container span:hover, .timer-container:hover {
@@ -64,11 +96,10 @@
     font-size: var(--timer-font-size);
 }
 
-.timer-unit {
-    font-size: calc(var(--timer-font-size) - 1);
+.timer-unit, .timer-display-unit {
+    font-size: 1rem;
 }
 
 .timer-display {
     font-size: var(--timer-font-size);
-
 }
