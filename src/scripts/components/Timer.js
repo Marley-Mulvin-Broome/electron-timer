@@ -16,7 +16,6 @@ class Timer {
 
   forceSelection = false;
 
-
   #storedTime;
   #runningTime;
 
@@ -28,6 +27,9 @@ class Timer {
   #paused = false;
   #intervalObject = null;
   #displaySpan;
+
+  #fullscreenButton;
+  #fullscreen = false;
 
   #buttonContainer;
   #buttonStart;
@@ -44,6 +46,14 @@ class Timer {
     this.#container = document.createElement("div");
     this.#container.classList.add("timer-container");
 
+    // this.#fullscreenButton = document.createElement("button");
+    // this.#fullscreenButton.classList.add("timer-fullscreen-button");
+    // this.#fullscreenButton.onclick = () => {
+    //   this.fullscreen();
+    // }
+
+    // this.#container.appendChild(this.#fullscreenButton);
+
     this.#isSelected = false;
     this.#selectedIndex = Timer.STARTING_INDEX;
     this.#displaySpan = document.createElement("span");
@@ -57,6 +67,8 @@ class Timer {
     
     this.#storedTime = new Time(0);
     this.#runningTime = new Time(0);
+
+    
   
     for (let i = 0; i < 9; i++) {
       const isValue = (i + 1) % 3 !== 0;
@@ -124,10 +136,6 @@ class Timer {
       return;
     }
 
-    this.start();
-  }
-
-  clickStart() {
     this.start();
   }
 
@@ -455,6 +463,18 @@ class Timer {
     }
   }
 
+  fullscreen() {
+    if (this.#fullscreen) {
+      // unfullscreen
+      this.#container.classList.remove("timer-fullscreen");
+      this.#fullscreen = false;
+      return;
+    }
+
+    this.#fullscreen = true;
+    this.#container.classList.add("timer-fullscreen");
+  }
+
   #hideSelected() {
     this.#spans[this.#selectedIndex].classList.remove("timer-active");
   }
@@ -777,16 +797,3 @@ class Timer {
 
 
 export { Timer };
-
-/*
-window.addEventListener("keydown", (event) => {
-  if (!this.#isSelected) {
-    return;
-  }
-
-  if (event.key === "ArrowRight") {
-    this.selectNext();
-  } else if (event.key === "ArrowLeft") {
-    this.selectPrevious();
-  }
-});*/

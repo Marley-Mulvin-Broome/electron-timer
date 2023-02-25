@@ -39,7 +39,7 @@
 
 
 /* The container being selected */
-.timer-selected {
+.timer-selected:not(.timer-fullscreen) {
     animation-name: selecttimer;
     animation-duration: 0.5s;
     animation-iteration-count: 1;
@@ -95,6 +95,7 @@
 
     width: 300px;
     height: 140px;
+
 }
 
 .timer-container:focus {
@@ -103,6 +104,15 @@
 
  .timer-container:hover:not(.timer-selected) {
     cursor: pointer;
+}
+
+.timer-fullscreen {
+    width:  50vw !important;
+    height: 90vh !important;
+    padding: 10%;
+    margin: auto;
+
+    box-shadow: none;
 }
 
 .timer-hidden {
@@ -196,4 +206,18 @@
 
     box-shadow: 0px 0px 10px 3px rgba(234,72,242,0.9);
     transition: box-shadow 0.3s ease-out;
+}
+
+.timer-fullscreen-button {
+    background-color: none;
+    border: none;
+    display: block;
+    float: right;
+    background-image: url("../../img/fullscreen.png");
+
+    margin-right: -10px;
+    margin-top: -10px;
+
+    width: 25px;
+    height: 25px;
 }
