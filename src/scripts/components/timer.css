@@ -1,0 +1,223 @@
+:root {
+    --timer-font-size: 5rem;
+}
+
+@keyframes selecttimer {
+    from {
+        box-shadow: none;
+    }
+
+    to {
+        box-shadow: var(--selection-box-shadow);
+    }
+}
+
+@keyframes fadeinselection {
+
+    from {
+        border: none;
+        background-color: var(--dark-style-bg);
+    }
+
+    to {
+        border-bottom: white solid 1px;
+        background-color: var(--dark-style-highlight);
+    }
+}
+
+@keyframes grow-bottom-border {
+    0% {
+        width: 0%;
+        left: 50%;
+    }
+
+    100% {
+        width: 100%;
+        left: 0%;
+    }
+}
+
+
+/* The container being selected */
+.timer-selected:not(.timer-fullscreen) {
+    animation-name: selecttimer;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    box-shadow: var(--selection-box-shadow);
+    position: relative;
+
+}
+
+.timer-selected:hover {
+    cursor: default;
+}
+
+.timer-selected:after {
+    content: "";
+    position: absolute;
+    border-bottom: #ffb2ff 1px solid;
+    
+    bottom: 0;
+    height: 15px;
+    width: 100%;
+    left: 0%;
+    
+    animation-name: grow-bottom-border;
+    animation-duration: 0.5s;
+}
+
+.timer-progress:before {
+    content: "";
+    position: absolute;
+    border-bottom: #ffb2ff 1px solid;
+    
+    bottom: 0;
+    height: 15px;
+    width: 100%;
+    left: 0%;
+}
+
+/* The individual span being selected */
+.timer-active {
+    border-bottom: white solid 1px;
+    background-color: var(--dark-style-highlight);
+
+    animation-name: fadeinselection;
+    animation-duration: 0.2s;
+}
+
+.timer-container {
+    color: #FFF;
+
+    text-align: center;
+
+    padding: 20px;
+
+    width: 300px;
+    height: 140px;
+
+}
+
+.timer-container:focus {
+    outline: none;
+}
+
+ .timer-container:hover:not(.timer-selected) {
+    cursor: pointer;
+}
+
+.timer-fullscreen {
+    width:  50vw !important;
+    height: 90vh !important;
+    padding: 10%;
+    margin: auto;
+
+    box-shadow: none;
+}
+
+.timer-hidden {
+    display: none;
+}
+
+.timer-digit {
+    font-size: var(--timer-font-size);
+}
+
+.timer-unit, .timer-display-unit {
+    font-size: 1rem;
+}
+
+.timer-display {
+    font-size: var(--timer-font-size);
+}
+
+/*
+    Buttons
+*/
+
+@keyframes timer-button-hover {
+    from {
+        background-color: rgba(255, 178, 255, 0);
+        color: #FFF;
+    }
+
+    to {
+        color: #000;
+        background-color: rgba(255, 255, 255, 1);
+    }
+}   
+
+.timer-container:not(.timer-selected) .timer-buttons-container {
+    opacity: 0.2;
+}
+
+.timer-button {
+    background: none;
+    border: 2px solid;
+    border-radius: 10px;
+
+    width: 100px;
+    height: 30px;
+
+    margin: 10px;
+
+    font-size: 1.3rem;
+
+    color: #FFF;
+
+    position: relative;
+}
+
+.timer-button:focus {
+    outline: none;
+}
+
+.timer-button:hover {
+    cursor:pointer;
+}
+
+.timer-reset-button {
+    border-color: white;
+
+    transition: background-color 0.3s ease-out;
+}
+
+.timer-selected .timer-buttons-container .timer-reset-button:hover {
+    color: #000;
+    background-color: rgba(255, 255, 255, 1);
+
+    transition: color 0.3s ease-in;
+    transition: background-color 0.3s ease-in;
+
+/* 
+    animation: timer-button-hover;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in; */
+}
+
+.timer-start-button {
+    background-color: #ffb2ff;
+    border-color: #ffb2ff;
+    transition: box-shadow 0.3s ease-in;
+    /* background: #ffb2ff; */
+}
+
+.timer-selected .timer-buttons-container .timer-start-button:hover {
+
+    box-shadow: 0px 0px 10px 3px rgba(234,72,242,0.9);
+    transition: box-shadow 0.3s ease-out;
+}
+
+.timer-fullscreen-button {
+    background-color: none;
+    border: none;
+    display: block;
+    float: right;
+    background-image: url("../../img/fullscreen.png");
+
+    margin-right: -10px;
+    margin-top: -10px;
+
+    width: 25px;
+    height: 25px;
+}
