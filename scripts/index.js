@@ -1,3 +1,5 @@
+import { Timer } from "./components/timer.js";
+
 function selectTimer(timer) {
   if (selectedTimer !== null) {
     selectedTimer.select(false);

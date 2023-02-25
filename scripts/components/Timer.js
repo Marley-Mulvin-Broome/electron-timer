@@ -583,7 +583,6 @@ class Timer {
 
     let curTime = new Date(time);
 
-
     return curTime;
   }
 
@@ -734,6 +733,10 @@ class Timer {
   static timeToMilliseconds(time, unit) {
     switch (unit) {
       case Timer.TIME_HOUR:
+        if (time >= 24) {
+          time = 23.999999;
+        }
+
         return ((time * 60) * 60) * 1000;
 
       case Timer.TIME_MINUTE:
@@ -784,7 +787,7 @@ class Timer {
 
 
 
-//export { Timer };
+export { Timer };
 
 /*
 window.addEventListener("keydown", (event) => {
