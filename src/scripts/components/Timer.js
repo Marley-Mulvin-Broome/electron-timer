@@ -1,4 +1,4 @@
-import { isElement, stylesheetIncluded } from "../logic/utility.js";
+import { isElement, stylesheetIncluded, isNumber } from "../logic/utility.js";
 
 if (window.Time === undefined) {
   throw Error("Missing module Time in global object");
@@ -40,6 +40,7 @@ class Timer {
   /**
    * Creates a new timer object. This includes a container and the spans inside it
    * @param {HTMLElement} parent Element that will be parent to the timer component
+   * @param {tabindex} tabindex  The tab index this element has, -1 for none
    */
   constructor(parent, tabindex=-1) {
     
@@ -113,7 +114,7 @@ class Timer {
         }
 
         if (this.started) {
-          this.reset();
+          this.stop();
           return;
         }
 
@@ -196,15 +197,6 @@ class Timer {
     } else {
       this.#buttonStart.innerText = "Pause";
     }
-  }
-
-  reset() {
-    if (!this.started) {
-      console.error("Error when resetting timer: can't reset started timer");
-      return;
-    }
-
-    this.stop();
   }
 
   /**
@@ -326,11 +318,20 @@ class Timer {
     this.#spans[index].classList.remove("timer-active");
   }
 
+  /**
+   * Switches input focus to a different digit.
+   * @param {Number} index Index of span to set active
+   * @param {Number} prevIndex Previously selected index
+   */
   setActiveSpan(index, prevIndex) {
     this.deactivateSpan(prevIndex);
     this.activateSpan(index);
   }
 
+  /**
+   * Hides a span containing a digit for input
+   * @param {(Number|HTMLElement)} index The index of the span to be hidden
+   */
   hideSpan(index) {
     if (isElement(index)) {
       index.classList.add("timer-hidden");
@@ -344,6 +345,10 @@ class Timer {
     this.#spans[index].classList.add("timer-hidden");
   }
 
+  /**
+   * Shows a span containg a digit for input
+   * @param {(Number|HTMLElement)} index The index of the span to be shown
+   */
   showSpan(index) {
     if (isElement(index)) {
       index.classList.remove("timer-hidden");
@@ -357,6 +362,10 @@ class Timer {
     this.#spans[index].classList.remove("timer-hidden");
   }
 
+  /**
+   * Hides a list of spans used for displaying input
+   * @param {HTMLElement[]} spans List of spans to hide
+   */
   hideSpans(spans = null) {
     if (spans === null) {
       spans = this.#spans;
@@ -377,6 +386,10 @@ class Timer {
     });
   }
 
+  /**
+   * Shows a list of spans used for displayign input
+   * @param {HTMLElement[]} spans List of spans to show
+   */
   showSpans(spans = null) {
     if (spans === null) {
       spans = this.#spans;
@@ -414,16 +427,25 @@ class Timer {
       if (!this.started) {
         this.start();
       }
-    } else if (Timer.keyIsDigit(key)) {
+    } else if (isNumber(key)) {
       this.insertDigit(parseInt(key));
     }
   }
 
+  /**
+   * Inserts a digit into the currently selected span, shifting the currently inputted time to the left
+   * @param {(String|Number)} digit Digit to be inserted
+   */
   insertDigit(digit) {
     this.#shiftLeft(this.#selectedIndex);
     this.#spans[this.#selectedIndex].innerText = digit;
   }
 
+  /**
+   * Gets the current value of a unit (s, m, h) on the timer by UNIT (See Time.UNIT_HOUR)
+   * @param {Object} unit Time unit object
+   * @returns {Number} Current value of that unit
+   */
   getUnitTime(unit) {
     let firstIndex = 0;
 
@@ -439,10 +461,17 @@ class Timer {
     return this.#parseUnitAt(firstIndex);
   }
 
+  /**
+   * Shifts the content of the input from left to right, using the currently selected index as an endpoint
+   */
   backspace() {
     this.#shiftRight(this.#selectedIndex);
   }
 
+  /**
+   * Formats the display element's inner text to the given time object's timeString (See Time.timeString)
+   * @param {Time} time Time object to format
+   */
   formatDisplayElement(time) {
     let baseString = time.timeString;
   
@@ -463,7 +492,12 @@ class Timer {
     }
   }
 
+  /**
+   * Fullscreens the object NOTE: NOT IMPLEMENTED FULLY YET
+   */
   fullscreen() {
+    throw Error("Not implemented");
+
     if (this.#fullscreen) {
       // unfullscreen
       this.#container.classList.remove("timer-fullscreen");
@@ -475,6 +509,9 @@ class Timer {
     this.#container.classList.add("timer-fullscreen");
   }
 
+  /**
+   * 
+   */
   #hideSelected() {
     this.#spans[this.#selectedIndex].classList.remove("timer-active");
   }
@@ -517,10 +554,10 @@ class Timer {
 
   #isSpanUnitIndicator(span) {
     if (Object.is(span)) {
-      return !this.keyIsDigit(span.innerText);
+      return !isNumber(span.innerText);
     }
 
-    return !this.keyIsDigit(this.#spans[span].innerText);
+    return !isNumber(this.#spans[span].innerText);
   }
 
   #parsedIndex(index) {
@@ -548,7 +585,7 @@ class Timer {
         return false;
       }
 
-      if (Timer.keyIsDigit(span.innerText) && index !== 0) {
+      if (isNumber(span.innerText) && index !== 0) {
         const leftIndex = Timer.getBoundedIndex(
           index - 1, 
           this.#spans.length, 
@@ -650,26 +687,46 @@ class Timer {
     this.select(value);
   }
   
+  /**
+   * Set the callback for when thh container is clicked. Default is nothing, useful for selecting multiple timers.
+   * @param {Function} callback The function to call when the container is clicked
+   */
   set onclick(callback) {
     this.#container.onclick = callback;
   }
 
+  /**
+   * Set the callback for when the container is focused. Useful for implementing tab index. NOTE: If tab index is not set in constructor may not work as intended.
+   * @param {Function} callback The function to call when the container is focused
+   */
   set onfocus(callback) {
     this.#container.onfocus = callback;
   }
 
+  /**
+   * Whether the timer is selected or not
+   */
   get selected() {
     return this.#isSelected;
   }
 
+  /**
+   * The currently selected span index for input
+   */
   get currentIndex() {
     return this.#selectedIndex;
   }
   
+  /**
+   * The current span selected for input
+   */
   get currentTimerSpan() {
     return this.#spans[selectedIndex];
   }
 
+  /**
+   * Whether the timer has been started or not
+   */
   get started() {
     return this.#started;
   }
@@ -704,6 +761,13 @@ class Timer {
   }
 
 
+  /**
+   * Get the index of the next input span to be selected based on a change of selection
+   * @param {Number} index The index to get the bounded version for
+   * @param {Number} spansLength The length of the spans list
+   * @param {Number} previousIndex The previous index to determine which way the selection is moving
+   * @returns The new bounded index
+   */
   static getBoundedIndex(index, spansLength, previousIndex) {
     if (index < 0) {
       return 0;
@@ -720,42 +784,10 @@ class Timer {
     return index;
   }
 
-  static keyIsDigit(key) {
-    return !isNaN(key);
-  }
-
-  static formatTime(dateTime) {
-    let hours = dateTime.getUTCHours();
-    let minutes = dateTime.getMinutes();
-    let seconds = dateTime.getSeconds();
-
-    let formatString = "";
-
-    let doHours = false;
-    let doMinutes = false;
-
-    if (hours !== 0) {
-      doHours = true;
-      doMinutes = true;
-    } else if (minutes !== 0) {
-      doMinutes = true;
-    }
-
-    if (doHours) {  
-      formatString += hours + "h";
-
-    }
-
-    if (doMinutes) {
-      formatString += minutes + "m";
-    }
-
-
-    formatString += seconds + "s";
-
-    return formatString;
-  }
-
+  /**
+   * Creates a span used for displaying the timer in input mode.
+   * @returns {HTMLElement}
+   */
   static createDisplaySpan() {
     const span = document.createElement("span");
     span.classList.add("timer-display");
@@ -763,6 +795,11 @@ class Timer {
     return span;
   }
 
+  /**
+   * Creates a span used for displaying a unit indicator
+   * @param {String} unit Unit string representation
+   * @returns {HTMLElement}
+   */
   static createDisplayUnit(unit) {
     const span = document.createElement("span");
     span.classList.add("timer-display-unit");
@@ -771,6 +808,12 @@ class Timer {
     return span;
   }
 
+  /**
+   * Create the buttons and container for the timer component
+   * @param {Function} onClickStart Callback for when the start button is clicked
+   * @param {Function} onClickStop Callback for when the stop button is clicked
+   * @returns {HTMLElement[]} Button Container, Start Button, Reset Button
+   */
   static createButtons(onClickStart, onClickStop) {
     const container = document.createElement("div");
     container.classList.add("timer-buttons-container");

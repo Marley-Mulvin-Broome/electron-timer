@@ -29,4 +29,13 @@ function linkStyleSheet(href) {
   document.head.appendChild(link);
 }
 
-export { isElement, stylesheetIncluded, getRunningDirectory, linkStyleSheet };
+/**
+ * Checks if a variable is a number
+ * @param {any} value Value to check
+ * @returns {Boolean} Whether the value is a number or not
+ */
+function isNumber(value) {
+  return !isNaN(value);
+}
+
+export { isElement, stylesheetIncluded, getRunningDirectory, linkStyleSheet, isNumber };
