@@ -164,3 +164,49 @@ test("get seconds", () => {
     expect(t.seconds).toBe(pair.result);
   });
 });
+
+test("large milliseconds", () => {
+  const t = new Time(0);
+
+  expect(() => t.milliseconds = 604800000).toThrow(RangeError);
+  expect(() => t.milliseconds = 60480343000).toThrow(RangeError);
+  expect(() => t.milliseconds = -1).toThrow(RangeError);
+  expect(() => t.milliseconds = -3482).toThrow(RangeError);
+  expect(() => t.milliseconds = -90489).toThrow(RangeError);
+  expect(() => t.milliseconds = 492347).not.toThrow(RangeError);
+  expect(() => t.milliseconds = 0).not.toThrow(RangeError);
+  expect(() => t.milliseconds = (604800000 - 1)).not.toThrow(RangeError);
+  
+});
+
+test("timeString", () => {
+  const valuePairs = [
+    {
+      value: 36948393,
+      result: "10h15m48s"
+    },
+    {
+      value: 40800000,
+      result: "11h20m0s"
+    },
+    {
+      value: 49382818,
+      result: "13h43m2s"
+    },
+    {
+      value: 3694839,
+      result: "1h1m34s"
+    },
+    {
+      value: 36948393,
+      result: "10h15m48s"
+    },
+  ];
+
+  const t = new Time(0);
+
+  valuePairs.forEach((pair) => {
+    t.milliseconds = pair.value;
+    expect(t.timeString).toBe(pair.result);
+  });
+});

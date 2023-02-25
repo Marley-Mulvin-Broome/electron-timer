@@ -1,6 +1,6 @@
 class Time {
 
-  milliseconds;
+  #milliseconds;
 
   constructor(milliseconds) {
     if (milliseconds < 0) {
@@ -26,6 +26,22 @@ class Time {
 
   get seconds() {
     return Math.floor(Time.convertFromMilliseconds(this.milliseconds, Time.UNIT_SECOND) % 60);
+  }
+
+  get milliseconds() {
+    return this.#milliseconds;
+  }
+
+  set milliseconds(value) {
+    if (value >= 604800000) {
+      throw RangeError(`${value} is too large a number for this datastructure to hanndle.`);
+    }
+
+    if (value < 0) {
+      throw RangeError(`millisecond cannot be negative (${value})`);
+    }
+
+    this.#milliseconds = value;
   }
 
   get timeString() {
