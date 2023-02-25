@@ -140,6 +140,9 @@ class Timer {
     this.start();
   }
 
+  /**
+   * Clears the current input
+   */
   clearInput() {
     this.#spans.forEach((span, index) => {
       if (this.indexBounded(index)) {
