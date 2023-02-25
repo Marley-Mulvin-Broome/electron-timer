@@ -1,24 +1,31 @@
-
-
-
 class Time {
 
-  #milliseconds;
+  milliseconds;
 
   constructor(milliseconds) {
-    this.#milliseconds = milliseconds;
-  }
+    if (milliseconds < 0) {
+      throw RangeError("Cannot make time object with negative milliseconds");
+    }
 
+    this.milliseconds = milliseconds;
+  }
+  /**
+   * Properties
+   */
+
+  /**
+   * The current number of hours
+   */
   get hours() {
-    return BigInt(((this.#milliseconds / 1000) / 60) / 60);
+    return Math.floor(Time.convertFromMilliseconds(this.milliseconds, Time.UNIT_HOUR) % 24);
   }
 
   get minutes() {
-    let remainderMilliseconds = this.hours
+    return Math.floor(Time.convertFromMilliseconds(this.milliseconds, Time.UNIT_MINUTE) % 60);
   }
 
   get seconds() {
-
+    return Math.floor(Time.convertFromMilliseconds(this.milliseconds, Time.UNIT_SECOND) % 60);
   }
 
   get timeString() {
@@ -53,6 +60,10 @@ class Time {
     return formatString;
   }
 
+  /**
+   * Static functions
+   */
+
   static UNIT_HOUR    = { display: "h", operationIndex: 0 };
   static UNIT_MINUTE  = { display: "m", operationIndex: 1 };
   static UNIT_SECOND  = { display: "s", operationIndex: 2 };
@@ -60,35 +71,61 @@ class Time {
 
   static CONVERT_DIRECTION = { biggerUnit: -1, smallerUnit: 1 }
 
-  static convert(value, direction, startingUnit) {
-    if (!Object.is(unit)) {
+  static convert(value, direction, startingUnit, endUnit) {
+    if (typeof startingUnit !== 'object') {
       console.error("Error converting to milliseconds: ${unit} isnt a unit object!");
       return;
     }
+
+    let curValue = value;
 
     let start = startingUnit.operationIndex;
 
-    for (let i = start; i > -1 && i < this.OPERATIONS.length; i += direction) {
+    let lowerBound = -1;
+    let upperBound = endUnit.operationIndex + 1;
+
+    if (direction === -1) {
+      lowerBound = endUnit.operationIndex - 1;
+      upperBound = Time.OPERANDS.length;
+    }
+
+    for (let i = start; i > lowerBound && i < upperBound; i += direction) {
       const operation = Time.OPERANDS[i];
       
       if (direction < 0) {
-        value /= operation;
+        curValue /= operation;
       } else {
-        value *= operation;
+        curValue *= operation;
       }
     }
 
-    return value;
+    return curValue;
   }
 
   static convertToMilliseconds(value, unit) {
-    if (!Object.is(unit)) {
+    if (typeof unit !== 'object') {
       console.error("Error converting to milliseconds: ${unit} isnt a unit object!");
       return;
     }
 
-    return Time.convert(value, Time.CONVERT_DIRECTION.smallerUnit, unit);
+    return Time.convert(value, Time.CONVERT_DIRECTION.smallerUnit, unit, Time.UNIT_SECOND);
+  }
+
+  static convertFromMilliseconds(value, unit) {
+    if (typeof unit !== 'object') {
+      console.error("Error converting from milliseconds: ${unit} isnt a unit object!");
+      return;
+    }
+
+    return Time.convert(value, Time.CONVERT_DIRECTION.biggerUnit, Time.UNIT_SECOND, unit);
   }
 }
 
-export { Time };
+if (
+  typeof module !== 'undefined' &&
+  typeof module.exports !== 'undefined'
+) {
+  module.exports = Time;
+} else {
+  window.Time = Time;
+}
