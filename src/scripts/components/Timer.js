@@ -1,8 +1,13 @@
+import { isElement, stylesheetIncluded } from "../logic/utility.js";
+
 if (window.Time === undefined) {
   throw Error("Missing module Time in global object");
 }
 
-import { isElement } from "../logic/utility.js";
+if (!stylesheetIncluded("timer.css")) {
+  console.warn("Style sheet not loaded!!");
+}
+
 
 const ONE_SECOND = 1000;
 
