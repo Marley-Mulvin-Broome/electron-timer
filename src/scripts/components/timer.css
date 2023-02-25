@@ -61,10 +61,20 @@
     height: 15px;
     width: 100%;
     left: 0%;
-
     
     animation-name: grow-bottom-border;
     animation-duration: 0.5s;
+}
+
+.timer-progress:before {
+    content: "";
+    position: absolute;
+    border-bottom: #ffb2ff 1px solid;
+    
+    bottom: 0;
+    height: 15px;
+    width: 100%;
+    left: 0%;
 }
 
 /* The individual span being selected */

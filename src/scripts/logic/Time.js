@@ -45,14 +45,14 @@ class Time {
   }
 
   get timeString() {
-    let hours = this.hours;
-    let minutes = this.minutes;
-    let seconds = this.seconds;
 
     let formatString = "";
 
     let doHours = false;
     let doMinutes = false;
+
+    let hours = this.hours;
+    let minutes = this.minutes;
 
     if (hours !== 0) {
       doHours = true;
@@ -63,7 +63,6 @@ class Time {
 
     if (doHours) {  
       formatString += hours + "h";
-
     }
 
     if (doMinutes) {
@@ -71,7 +70,7 @@ class Time {
     }
 
 
-    formatString += seconds + "s";
+    formatString += this.seconds + "s";
 
     return formatString;
   }

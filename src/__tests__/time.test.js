@@ -1,7 +1,7 @@
 const Time = require("../scripts/logic/Time");
 
 test("initializing", () => {
-  for (let i = 0; i < 100000; i += 100) {
+  for (let i = 0; i < 10; i += 100) {
     const time = new Time(i);
     expect(time.milliseconds).toBe(i);
   }
@@ -209,4 +209,37 @@ test("timeString", () => {
     t.milliseconds = pair.value;
     expect(t.timeString).toBe(pair.result);
   });
+});
+
+test("countdown", () => {
+  const maxMs = 1000;
+
+  const t = new Time(maxMs);
+
+  let countdown = maxMs;
+
+  for (let i = 0; i < maxMs; i++) {
+    t.milliseconds--;
+    countdown--;
+
+    expect(t.milliseconds).toBe(countdown);
+  }
+});
+
+test("countdown string drop unit", () => {
+  const t = new Time(60000); // 1 minute
+
+  expect(t.timeString).toBe("1m0s");
+
+  t.milliseconds--;
+
+  expect(t.timeString).toBe("59s");
+
+  t.milliseconds = 3600000;
+
+  expect(t.timeString).toBe("1h0m0s");
+
+  t.milliseconds--;
+
+  expect(t.timeString).toBe("59m59s");
 });

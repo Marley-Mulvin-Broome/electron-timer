@@ -464,7 +464,7 @@ class Timer {
   }
 
   #countdown() {
-    this.#runningTime.milliseconds -= 1;
+    this.#runningTime.milliseconds -= ONE_SECOND;
   }
 
   #toggleDisplay() {
