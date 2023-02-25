@@ -1,24 +1,28 @@
-class Timer {
-  static TIME_SECOND  = 's';
-  static TIME_MINUTE  = 'm';
-  static TIME_HOUR    = 'h';
-  static TIME_UNITS   = [ Timer.TIME_SECOND, Timer.TIME_MINUTE, Timer.TIME_HOUR ]
-  static ONE_SECOND   = 1000;
+if (window.Time === undefined) {
+  throw Error("Missing module Time in global object");
+}
 
+import { isElement } from "../logic/utility.js";
+
+const ONE_SECOND = 1000;
+
+class Timer {
   static STARTING_INDEX = 7;
 
   forceSelection = false;
+
+
+  #storedTime;
+  #runningTime;
 
   #spans;
   #selectedIndex;
   #isSelected;
   #container;
   #started = false;
-  #intialTime = null;
   #paused = false;
   #intervalObject = null;
   #displaySpan;
-  #curTime = null;
 
   #buttonContainer;
   #buttonStart;
@@ -46,16 +50,18 @@ class Timer {
     this.#audioElement.loop = false;
     this.#container.setAttribute("tabindex", tabindex);
     
+    this.#storedTime = new Time(0);
+    this.#runningTime = new Time(0);
   
     for (let i = 0; i < 9; i++) {
       const isValue = (i + 1) % 3 !== 0;
   
-      let timeUnit = Timer.TIME_SECOND;
+      let timeUnit = Time.UNIT_SECOND.display;
   
       if (i < 3) {
-        timeUnit = Timer.TIME_HOUR;
+        timeUnit = Time.UNIT_HOUR.display;
       } else if (i < 6) {
-        timeUnit = Timer.TIME_MINUTE;
+        timeUnit = Time.UNIT_MINUTE.display;
       }
   
       this.#spans.push(
@@ -141,8 +147,9 @@ class Timer {
     this.#buttonStart.innerText = "Pause";
 
     // set the initialTime to whatever is in the input
-    this.#intialTime = this.time;
-    this.#curTime = this.time;
+    let curMilliseconds = this.time;
+    this.#storedTime.milliseconds = curMilliseconds;
+    this.#runningTime.milliseconds = curMilliseconds;
     // change to the display
     this.hideSpans();
     this.#updateDisplay();
@@ -153,14 +160,14 @@ class Timer {
         return;
       }
 
-      if (Timer.timeIsZero(this.#curTime)) {
+      if (this.#runningTime.seconds === 0) {
         this.stop(false);
         return;
       }
 
       this.#countdown();
       this.#updateDisplay();
-    }, Timer.ONE_SECOND);
+    }, ONE_SECOND);
 
     this.#started = true;
   }
@@ -408,10 +415,10 @@ class Timer {
     let firstIndex = 0;
 
     switch (unit) {
-      case Timer.TIME_MINUTE:
+      case Time.UNIT_MINUTE:
         firstIndex = 3;
         break;
-      case Timer.TIME_SECOND:
+      case Time.UNIT_SECOND:
         firstIndex = 6;
         break;
     }
@@ -423,15 +430,15 @@ class Timer {
     this.#shiftRight(this.#selectedIndex);
   }
 
-  formatDisplayElement(dateTime) {
-    let baseString = Timer.formatTime(dateTime);
+  formatDisplayElement(time) {
+    let baseString = time.timeString;
   
     let currentElement = document.createElement("span");
 
     this.#displaySpan.innerHTML = "";
 
     for (let i = 0; i < baseString.length; i++) {
-      if (Timer.TIME_UNITS.includes(baseString[i])) {
+      if (["h", "m", "s"].includes(baseString[i])) {
         this.#displaySpan.appendChild(currentElement);
         this.#displaySpan.appendChild(Timer.createDisplayUnit(baseString[i]));
         if (i + 1 != baseString.length) {
@@ -452,7 +459,7 @@ class Timer {
   }
 
   #countdown() {
-    this.#curTime.setSeconds(this.#curTime.getSeconds() - 1);
+    this.#runningTime.milliseconds -= 1;
   }
 
   #toggleDisplay() {
@@ -468,7 +475,7 @@ class Timer {
     let time = timeObject;
 
     if (time === undefined) {
-      time = this.#curTime;
+      time = this.#runningTime;
     }
 
     this.formatDisplayElement(time);
@@ -567,12 +574,16 @@ class Timer {
     return false;
   }
 
+  /**
+   * 
+   * @returns current time in the spans in milliseconds
+   */
   #parseCurrentTime() {
 
     const times = [
-      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_HOUR), Timer.TIME_HOUR),
-      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_MINUTE), Timer.TIME_MINUTE),
-      Timer.timeToMilliseconds(this.getUnitTime(Timer.TIME_SECOND), Timer.TIME_SECOND)
+      Time.convertToMilliseconds(this.getUnitTime(Time.UNIT_HOUR), Time.UNIT_HOUR),
+      Time.convertToMilliseconds(this.getUnitTime(Time.UNIT_MINUTE), Time.UNIT_MINUTE),
+      Time.convertToMilliseconds(this.getUnitTime(Time.UNIT_SECOND), Time.UNIT_SECOND),
     ];
 
     let time = 0;
@@ -581,9 +592,7 @@ class Timer {
       time += t;
     });
 
-    let curTime = new Date(time);
-
-    return curTime;
+    return time;
   }
 
   /**
@@ -607,8 +616,6 @@ class Timer {
 
     this.setActiveSpan(this.#selectedIndex, prevIndex);
   }
-
-  
   
   /**
    * Sets whether the timer itself is selected
@@ -722,29 +729,6 @@ class Timer {
     formatString += seconds + "s";
 
     return formatString;
-  }
-
-  
-
-  static timeIsZero(dateTime) {
-    return dateTime.getUTCHours() === 0 && dateTime.getMinutes() === 0 && dateTime.getSeconds() === 0;
-  }
-
-  static timeToMilliseconds(time, unit) {
-    switch (unit) {
-      case Timer.TIME_HOUR:
-        if (time >= 24) {
-          time = 23.999999;
-        }
-
-        return ((time * 60) * 60) * 1000;
-
-      case Timer.TIME_MINUTE:
-        return (time * 60) * 1000;
-
-      case Timer.TIME_SECOND:
-        return time * 1000;
-    }
   }
 
   static createDisplaySpan() {
