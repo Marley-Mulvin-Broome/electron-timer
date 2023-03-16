@@ -1,0 +1,30 @@
+{
+    "name": "electron-timer",
+    "version": "1.0.0",
+    "description": "A basic timer which functionality for intervals",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "test": "jest",
+        "lint": "eslint **/*.js",
+        "lint-fix": "eslint --fix **/*.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "electron-timer"
+    },
+    "author": "Marley Mulvin Broome",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^29.4.4",
+        "@wdio/cli": "^8.3.11",
+        "@wdio/local-runner": "^8.3.11",
+        "@wdio/mocha-framework": "^8.3.0",
+        "@wdio/spec-reporter": "^8.3.0",
+        "chromedriver": "^110.0.0",
+        "electron": "^23.1.0",
+        "eslint": "^8.36.0",
+        "jest": "^29.4.3",
+        "wdio-chromedriver-service": "^8.1.1"
+    }
+}
