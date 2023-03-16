@@ -16,13 +16,13 @@
         "process": "readonly"
     },
     "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
         "quotes": [
             "error",
             "single"
+        ],
+        "indent": [
+            "error",
+            2
         ],
         "semi": [
             "error",
