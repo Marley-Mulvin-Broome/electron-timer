@@ -174,7 +174,7 @@ class Timer {
 				return;
 			}
 
-			if (this.#runningTime.seconds === 0) {
+			if (this.#runningTime.milliseconds === 0) {
 				this.stop(false);
 				return;
 			}
@@ -736,6 +736,10 @@ class Timer {
    */
 	get time() {
 		return this.#parseCurrentTime();
+	}
+
+	get container() {
+		return this.#container;
 	}
 
 	/**
