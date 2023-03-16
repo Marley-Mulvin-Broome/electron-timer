@@ -12,8 +12,6 @@ on:
 defaults:
   run:
     working-directory: src
-  uses:
-    working-directory: src
 
 jobs:
   build:
