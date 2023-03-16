@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ "master", "development" ]
 
+defaults:
+  run:
+    working-directory: src 
+
 jobs:
   build:
 
@@ -20,7 +24,6 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - run: cd /home/runner/work/electron-timer/src
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
