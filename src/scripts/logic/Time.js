@@ -1,4 +1,4 @@
-class Time {
+export class Time {
 
 	#milliseconds;
 
@@ -171,13 +171,4 @@ class Time {
 
 		return Time.convert(value, Time.CONVERT_DIRECTION.biggerUnit, Time.UNIT_SECOND, unit);
 	}
-}
-
-if (
-	typeof module !== 'undefined' &&
-  typeof module.exports !== 'undefined'
-) {
-	module.exports = Time;
-} else {
-	window.Time = Time;
 }

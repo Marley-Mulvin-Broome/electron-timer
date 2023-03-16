@@ -1,22 +1,22 @@
-const electronPath = require("electron");
-const { TestDriver } = require("../testDriver");
+const electronPath = require('electron');
+const { TestDriver } = require('../testDriver');
 
 const app = new TestDriver({
-  path: electronPath,
-  args: ["./"],
-  env: {
-    NODE_ENV: "test",
-  },
+	path: electronPath,
+	args: ['./'],
+	env: {
+		NODE_ENV: 'test',
+	},
 });
 
 beforeAll(async () => {
-  await app.isReady;
+	await app.isReady;
 });
 
 afterAll(() => {
-  app.stop();
+	app.stop();
 });
 
-test("Test!!", () => {
-  expect(1 + 1).toBe(2);
+test('Test!!', () => {
+	expect(1 + 1).toBe(2);
 });

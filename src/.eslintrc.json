@@ -4,11 +4,22 @@
         "commonjs": true,
         "es2021": true
     },
+    
     "extends": "eslint:recommended",
     "overrides": [
     ],
     "parserOptions": {
-        "ecmaVersion": "latest"
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "globals": {
+        "process": "readonly",
+        "expect": "readonly",
+        "describe": "readonly",
+        "test": "readonly",
+        "beforeEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly"
     },
     "rules": {
         "indent": [
