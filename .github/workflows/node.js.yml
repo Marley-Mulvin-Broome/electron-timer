@@ -14,7 +14,7 @@ defaults:
     working-directory: src
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -32,5 +32,6 @@ jobs:
           cache-dependency-path: ./src/package-lock.json
       - run: npm ci
       - run: npm run build --if-present
-      # only runs the test that can run on github (No custom test driver)
+      # only run the tests that can run on github (No custom test driver)
       - run: npm test -- time.test.js
+      - run: npm run lint
