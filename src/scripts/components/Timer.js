@@ -844,3 +844,24 @@ class Timer {
 
 
 export { Timer };
+
+
+/**
+ * ============== Sample structure ================
+ * <div class="timer-container timer-selected" tabindex="0">
+  <span class="timer-display timer-hidden"></span>
+  <span class="timer-digit timer-h">0</span>
+  <span class="timer-digit timer-h">0</span>
+  <span class="timer-unit timer-h">h</span>
+  <span class="timer-digit timer-m">0</span>
+  <span class="timer-digit timer-m">0</span>
+  <span class="timer-unit timer-m">m</span>
+  <span class="timer-digit timer-s">0</span>
+  <span class="timer-digit timer-s timer-active">0</span>
+  <span class="timer-unit timer-s">s</span>
+  <div class="timer-buttons-container">
+    <button class="timer-start-button timer-button" tabindex="-1">Start</button>
+    <button class="timer-reset-button timer-button" tabindex="-1">Reset</button>
+  </div>
+	</div>
+ */
