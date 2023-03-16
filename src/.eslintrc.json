@@ -13,13 +13,7 @@
         "sourceType": "module"
     },
     "globals": {
-        "process": "readonly",
-        "expect": "readonly",
-        "describe": "readonly",
-        "test": "readonly",
-        "beforeEach": "readonly",
-        "beforeAll": "readonly",
-        "afterAll": "readonly"
+        "process": "readonly"
     },
     "rules": {
         "indent": [

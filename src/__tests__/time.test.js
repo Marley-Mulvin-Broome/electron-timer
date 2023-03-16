@@ -1,6 +1,6 @@
-//import { expect, test, beforeEach } from "@jest/globals";
+import { expect, test, beforeEach, describe } from '@jest/globals';
 
-const Time = require('../scripts/logic/Time');
+import { Time } from '../scripts/logic/Time.js';
 
 const MAX_MILLISECONDS = 604800000;
 const ONE_HOUR = 3600000;

@@ -1,3 +1,5 @@
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
+
 const electronPath = require('electron');
 const { TestDriver } = require('../testDriver');
 
