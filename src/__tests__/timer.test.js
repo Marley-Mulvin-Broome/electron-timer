@@ -64,6 +64,8 @@ describe('Initial DOM structure', () => {
   });
 });
 
+// TODO: Add more testing for this component
+
 // describe('Interaction', () => {
 //   describe('Timer start', () => {
 //     test('Activates display', () => {
