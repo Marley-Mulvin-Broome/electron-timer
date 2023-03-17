@@ -45,3 +45,15 @@ export class SplitContainer {
     return this.#rightContent;
   }
 }
+
+/**
+ * =============== Example structure ==============
+ * <div class="split-container">
+ *  <div class="split-container-sub" style="width: 20%;">
+ *    ...content 
+ * </div>
+ *  <div class="split-container-sub" style="width: 50%;">
+ *    ...content 
+ * </div>
+ * </div>
+ */
