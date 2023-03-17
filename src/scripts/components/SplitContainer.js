@@ -37,6 +37,10 @@ export class SplitContainer {
     return subContainer;
   }
 
+  get container() {
+    return this.#container;
+  }
+
   get leftContent() {
     return this.#leftContent;
   }

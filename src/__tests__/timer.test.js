@@ -4,14 +4,13 @@
 
 import { expect, test, describe, afterAll, afterEach } from '@jest/globals';
 import { Timer } from '../scripts/components/Timer';
+import { clearDom } from '../testUtil/utilFuncs';
 // import { log } from 'console';
 
 const $ = require('jquery');
 
 
-function clearDom() {
-  document.body.innerHTML = '';
-}
+
 
 function addTimer(tabIndex = 0) {
   const timer = new Timer(tabIndex);
