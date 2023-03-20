@@ -29,6 +29,15 @@ export function linkStyleSheet(href) {
   document.head.appendChild(link);
 }
 
+export function createCheckbox(id) {
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = false;
+  checkbox.id = id;
+
+  return checkbox;
+}
+
 /**
  * Checks if a variable is a number
  * @param {any} value Value to check

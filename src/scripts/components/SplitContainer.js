@@ -32,7 +32,7 @@ export class SplitContainer {
     subContainer.classList.add('split-container-sub');
 
     subContainer.appendChild(content);
-    subContainer.setAttribute('style', `width: ${width};`);
+    subContainer.setAttribute('style', `flex: ${width};`);
 
     return subContainer;
   }
@@ -47,6 +47,10 @@ export class SplitContainer {
 
   get rightContent() {
     return this.#rightContent;
+  }
+
+  set onclick(callback) {
+    this.#container.onclick = callback;
   }
 }
 
