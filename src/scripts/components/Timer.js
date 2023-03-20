@@ -1,14 +1,17 @@
-import { isElement, stylesheetIncluded, isNumber } from '../logic/utility.js';
-import { Time } from '../logic/Time.js';
+import { isElement, stylesheetIncluded, isNumber } from "../logic/utility.js";
 
-if (!stylesheetIncluded('timer.css')) {
-  console.warn('Style sheet not loaded!!');
+if (window.Time === undefined) {
+  throw Error("Missing module Time in global object");
+}
+
+if (!stylesheetIncluded("timer.css")) {
+  console.warn("Style sheet not loaded!!");
 }
 
 
 const ONE_SECOND = 1000;
 
-export class Timer {
+class Timer {
   static STARTING_INDEX = 7;
 
   forceSelection = false;
@@ -39,10 +42,10 @@ export class Timer {
    * @param {HTMLElement} parent Element that will be parent to the timer component
    * @param {tabindex} tabindex  The tab index this element has, -1 for none
    */
-  constructor(tabindex=-1) {
+  constructor(parent, tabindex=-1) {
     
-    this.#container = document.createElement('div');
-    this.#container.classList.add('timer-container');
+    this.#container = document.createElement("div");
+    this.#container.classList.add("timer-container");
 
     // this.#fullscreenButton = document.createElement("button");
     // this.#fullscreenButton.classList.add("timer-fullscreen-button");
@@ -54,14 +57,14 @@ export class Timer {
 
     this.#isSelected = false;
     this.#selectedIndex = Timer.STARTING_INDEX;
-    this.#displaySpan = document.createElement('span');
-    this.#displaySpan.classList.add('timer-display');
+    this.#displaySpan = document.createElement("span");
+    this.#displaySpan.classList.add("timer-display");
     this.#hideDisplay();
     this.#container.appendChild(this.#displaySpan);
     this.#spans = [];
-    this.#audioElement = new Audio('timeraudio.mp3');
+    this.#audioElement = new Audio("timeraudio.mp3");
     this.#audioElement.loop = false;
-    this.#container.setAttribute('tabindex', tabindex);
+    this.#container.setAttribute("tabindex", tabindex);
     
     this.#storedTime = new Time(0);
     this.#runningTime = new Time(0);
@@ -89,6 +92,8 @@ export class Timer {
         this.#container.appendChild(span);
       }
     );
+
+    parent.appendChild(this.#container);
 
     [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
       () => {
@@ -123,10 +128,6 @@ export class Timer {
     this.#hideSelected();
   }
 
-  place(parent) {
-    parent.appendChild(this.#container);
-  }
-
   /**
    * Toggles whether this component is selected
    */
@@ -145,7 +146,7 @@ export class Timer {
   clearInput() {
     this.#spans.forEach((span, index) => {
       if (this.indexBounded(index)) {
-        span.innerText = '0';
+        span.innerText = "0";
       }
     });
   }
@@ -155,12 +156,12 @@ export class Timer {
    */
   start() {
     if (this.started) {
-      console.error('Error when starting timer: cannot start a timer that is already started!');
+      console.error("Error when starting timer: cannot start a timer that is already started!");
       return;
     }
 
-    this.#buttonStop.innerText = 'Stop';
-    this.#buttonStart.innerText = 'Pause';
+    this.#buttonStop.innerText = "Stop";
+    this.#buttonStart.innerText = "Pause";
 
     // set the initialTime to whatever is in the input
     let curMilliseconds = this.time;
@@ -176,7 +177,7 @@ export class Timer {
         return;
       }
 
-      if (this.#runningTime.milliseconds === 0) {
+      if (this.#runningTime.seconds === 0) {
         this.stop(false);
         return;
       }
@@ -195,9 +196,9 @@ export class Timer {
     this.#paused = !this.#paused;
 
     if (this.#paused) {
-      this.#buttonStart.innerText = 'Unpause';
+      this.#buttonStart.innerText = "Unpause";
     } else {
-      this.#buttonStart.innerText = 'Pause';
+      this.#buttonStart.innerText = "Pause";
     }
   }
 
@@ -207,12 +208,12 @@ export class Timer {
    */
   stop(suppressSound = true) {
     if (!this.started) {
-      console.error('Error when stopping timer: cannot stop timer that has not been started');
+      console.error("Error when stopping timer: cannot stop timer that has not been started");
       return;
     }
 
-    this.#buttonStart.innerText = 'Start';
-    this.#buttonStop.innerText = 'Reset';
+    this.#buttonStart.innerText = "Start";
+    this.#buttonStop.innerText = "Reset";
 
     // bring back all the spans
     this.showSpans();
@@ -239,13 +240,13 @@ export class Timer {
     this.#isSelected = value;
 
     if (!value) {
-      this.#container.classList.remove('timer-selected');
+      this.#container.classList.remove("timer-selected");
       this.#hideSelected();
       return;
     } 
 
     this.#showSelected();
-    this.#container.classList.add('timer-selected');
+    this.#container.classList.add("timer-selected");
   }
 
   /**
@@ -301,11 +302,11 @@ export class Timer {
    * @param {Number} index the index to activate
    */
   activateSpan(index) {
-    if (this.#inboundsError(index, 'activating span')) {
+    if (this.#inboundsError(index, "activating span")) {
       return;
     }
 
-    this.#spans[index].classList.add('timer-active');
+    this.#spans[index].classList.add("timer-active");
   }
 
   /**
@@ -313,11 +314,11 @@ export class Timer {
    * @param {Number} index the index to deactivate
    */
   deactivateSpan(index) {
-    if (this.#inboundsError(index, 'deactivating span')) {
+    if (this.#inboundsError(index, "deactivating span")) {
       return;
     }
 
-    this.#spans[index].classList.remove('timer-active');
+    this.#spans[index].classList.remove("timer-active");
   }
 
   /**
@@ -336,15 +337,15 @@ export class Timer {
    */
   hideSpan(index) {
     if (isElement(index)) {
-      index.classList.add('timer-hidden');
+      index.classList.add("timer-hidden");
       return;
     }
 
-    if (this.#inboundsError(index, 'hiding span')) {
+    if (this.#inboundsError(index, "hiding span")) {
       return;
     }
 
-    this.#spans[index].classList.add('timer-hidden');
+    this.#spans[index].classList.add("timer-hidden");
   }
 
   /**
@@ -353,15 +354,15 @@ export class Timer {
    */
   showSpan(index) {
     if (isElement(index)) {
-      index.classList.remove('timer-hidden');
+      index.classList.remove("timer-hidden");
       return;
     }
 
-    if (this.#inboundsError(index, 'showing span')) {
+    if (this.#inboundsError(index, "showing span")) {
       return;
     }
 
-    this.#spans[index].classList.remove('timer-hidden');
+    this.#spans[index].classList.remove("timer-hidden");
   }
 
   /**
@@ -374,12 +375,12 @@ export class Timer {
     }
 
     if (!Array.isArray(spans)) {
-      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`);
+      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`)
       return;
     }
 
     if (spans.length === 0) {
-      console.warn('Called hide spans function with 0 spans');
+      console.warn("Called hide spans function with 0 spans");
       return;
     } 
 
@@ -398,12 +399,12 @@ export class Timer {
     }
 
     if (!Array.isArray(spans)) {
-      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`);
+      console.error(`Error when hiding spans: passed parameter is not an array (${spans})`)
       return;
     }
 
     if (spans.length === 0) {
-      console.warn('Called hide spans function with 0 spans');
+      console.warn("Called hide spans function with 0 spans");
       return;
     } 
 
@@ -419,13 +420,13 @@ export class Timer {
    * @param {String} key key property from event.key
    */
   feedKeyPress(key) {
-    if (key === 'ArrowRight') {
+    if (key === "ArrowRight") {
       this.selectNext();
-    } else if (key === 'ArrowLeft') {
+    } else if (key === "ArrowLeft") {
       this.selectPrevious();
-    } else if (key === 'Backspace') { 
+    } else if (key === "Backspace") { 
       this.backspace();
-    } else if (key === 'Enter' ) {
+    } else if (key === "Enter" ) {
       if (!this.started) {
         this.start();
       }
@@ -452,12 +453,12 @@ export class Timer {
     let firstIndex = 0;
 
     switch (unit) {
-    case Time.UNIT_MINUTE:
-      firstIndex = 3;
-      break;
-    case Time.UNIT_SECOND:
-      firstIndex = 6;
-      break;
+      case Time.UNIT_MINUTE:
+        firstIndex = 3;
+        break;
+      case Time.UNIT_SECOND:
+        firstIndex = 6;
+        break;
     }
 
     return this.#parseUnitAt(firstIndex);
@@ -477,16 +478,16 @@ export class Timer {
   formatDisplayElement(time) {
     let baseString = time.timeString;
   
-    let currentElement = document.createElement('span');
+    let currentElement = document.createElement("span");
 
-    this.#displaySpan.innerHTML = '';
+    this.#displaySpan.innerHTML = "";
 
     for (let i = 0; i < baseString.length; i++) {
-      if (['h', 'm', 's'].includes(baseString[i])) {
+      if (["h", "m", "s"].includes(baseString[i])) {
         this.#displaySpan.appendChild(currentElement);
         this.#displaySpan.appendChild(Timer.createDisplayUnit(baseString[i]));
         if (i + 1 != baseString.length) {
-          currentElement = document.createElement('span');
+          currentElement = document.createElement("span");
         }
       } else {
         currentElement.innerHTML += baseString[i];
@@ -498,28 +499,28 @@ export class Timer {
    * Fullscreens the object NOTE: NOT IMPLEMENTED FULLY YET
    */
   fullscreen() {
-    throw Error('Not implemented');
+    throw Error("Not implemented");
 
-    // if (this.#fullscreen) {
-    // 	// unfullscreen
-    // 	this.#container.classList.remove('timer-fullscreen');
-    // 	this.#fullscreen = false;
-    // 	return;
-    // }
+    if (this.#fullscreen) {
+      // unfullscreen
+      this.#container.classList.remove("timer-fullscreen");
+      this.#fullscreen = false;
+      return;
+    }
 
-    // this.#fullscreen = true;
-    // this.#container.classList.add('timer-fullscreen');
+    this.#fullscreen = true;
+    this.#container.classList.add("timer-fullscreen");
   }
 
   /**
    * 
    */
   #hideSelected() {
-    this.#spans[this.#selectedIndex].classList.remove('timer-active');
+    this.#spans[this.#selectedIndex].classList.remove("timer-active");
   }
 
   #showSelected() {
-    this.#spans[this.#selectedIndex].classList.add('timer-active');
+    this.#spans[this.#selectedIndex].classList.add("timer-active");
   }
 
   #countdown() {
@@ -527,7 +528,7 @@ export class Timer {
   }
 
   #toggleDisplay() {
-    if (this.#displaySpan.classList.contains('timer-hidden')) {
+    if (this.#displaySpan.classList.contains("timer-hidden")) {
       this.#showDisplay();
       return;
     }
@@ -546,11 +547,11 @@ export class Timer {
   }
 
   #showDisplay() {
-    this.#displaySpan.classList.remove('timer-hidden');
+    this.#displaySpan.classList.remove("timer-hidden")
   }
 
   #hideDisplay() {
-    this.#displaySpan.classList.add('timer-hidden');
+    this.#displaySpan.classList.add("timer-hidden")
 
   }
 
@@ -563,7 +564,7 @@ export class Timer {
   }
 
   #parsedIndex(index) {
-    if (this.#inboundsError(index, 'parsing index') || this.#boundsError('parsing index')) {
+    if (this.#inboundsError(index, "parsing index") || this.#boundsError("parsing index")) {
       return;
     }
 
@@ -571,7 +572,7 @@ export class Timer {
   }
 
   #parseUnitAt(index) {
-    if (this.#inboundsError(index, 'parsing unit time') || this.#boundsError('parsing unit time')) {
+    if (this.#inboundsError(index, "parsing unit time") || this.#boundsError("parsing unit time")) {
       return;
     }
 
@@ -619,17 +620,17 @@ export class Timer {
       prevSpan.innerText = curSpan.innerText;
     }
 
-    this.#spans[0].innerText = '0';
+    this.#spans[0].innerText = "0";
   }
 
-  #boundsError(index, msg='') {
+  #boundsError(index, msg="") {
     if (!this.indexBounded(index)) {
-      console.error(`Error with ${msg} in timer object: index is a unit indicator not digit (${index})`);
+      console.error(`Error with ${msg} in timer object: index is a unit indicator not digit (${index})`)
       return true;
     }
   }
 
-  #inboundsError(index, msg='operation') {
+  #inboundsError(index, msg="operation") {
     if (!this.indexInBounds(index)) {
       console.error(`Error with ${msg} in timer object: out of bounds (${index})`);
       return true;
@@ -664,7 +665,7 @@ export class Timer {
    * @param {Number} newIndex the new index to be set to
    */
   set index(newIndex) {
-    if (this.#inboundsError(newIndex, 'setting index')) {
+    if (this.#inboundsError(newIndex, "setting index")) {
       return;
     }
 
@@ -706,14 +707,6 @@ export class Timer {
   }
 
   /**
-   * Sets the style attribute of the timer-container div to the provided string
-   * @param {String} styleString The string containg css styles
-   */
-  set style(styleString) {
-    this.#container.setAttribute('style', styleString);
-  }
-
-  /**
    * Whether the timer is selected or not
    */
   get selected() {
@@ -731,7 +724,7 @@ export class Timer {
    * The current span selected for input
    */
   get currentTimerSpan() {
-    return this.#spans[this.#selectedIndex];
+    return this.#spans[selectedIndex];
   }
 
   /**
@@ -748,10 +741,6 @@ export class Timer {
     return this.#parseCurrentTime();
   }
 
-  get container() {
-    return this.#container;
-  }
-
   /**
    * Creates a span element used within the timer component
    * @param {Boolean} isValue whether the new span holds a numberical value or a unit indicator string
@@ -759,13 +748,13 @@ export class Timer {
    * @returns 
    */
   static createTimerSpan(isValue, timeUnit) {
-    const span = document.createElement('span');
+    const span = document.createElement("span");
   
     if (isValue) {
-      span.classList.add('timer-digit');
+      span.classList.add("timer-digit");
       span.innerText = '0';
     } else {
-      span.classList.add('timer-unit');
+      span.classList.add("timer-unit");
       span.innerText = timeUnit;
     }
   
@@ -803,8 +792,8 @@ export class Timer {
    * @returns {HTMLElement}
    */
   static createDisplaySpan() {
-    const span = document.createElement('span');
-    span.classList.add('timer-display');
+    const span = document.createElement("span");
+    span.classList.add("timer-display");
 
     return span;
   }
@@ -815,8 +804,8 @@ export class Timer {
    * @returns {HTMLElement}
    */
   static createDisplayUnit(unit) {
-    const span = document.createElement('span');
-    span.classList.add('timer-display-unit');
+    const span = document.createElement("span");
+    span.classList.add("timer-display-unit");
     span.innerText = unit;
 
     return span;
@@ -829,23 +818,23 @@ export class Timer {
    * @returns {HTMLElement[]} Button Container, Start Button, Reset Button
    */
   static createButtons(onClickStart, onClickStop) {
-    const container = document.createElement('div');
-    container.classList.add('timer-buttons-container');
+    const container = document.createElement("div");
+    container.classList.add("timer-buttons-container");
     
-    const startButton = document.createElement('button');
-    startButton.classList.add('timer-start-button', 'timer-button');
-    startButton.innerText = 'Start';
-    startButton.addEventListener('click', onClickStart);
-    startButton.setAttribute('tabindex', '-1');
+    const startButton = document.createElement("button");
+    startButton.classList.add("timer-start-button", "timer-button");
+    startButton.innerText = "Start";
+    startButton.addEventListener("click", onClickStart);
+    startButton.setAttribute("tabindex", "-1");
 
-    const resetButton = document.createElement('button');
-    resetButton.classList.add('timer-reset-button', 'timer-button');
-    resetButton.innerText = 'Reset';
-    resetButton.addEventListener('click', onClickStop);
-    resetButton.setAttribute('tabindex', '-1');
+    const resetButton = document.createElement("button");
+    resetButton.classList.add("timer-reset-button", "timer-button");
+    resetButton.innerText = "Reset";
+    resetButton.addEventListener("click", onClickStop);
+    resetButton.setAttribute("tabindex", "-1");
 
     container.appendChild(startButton);
-    container.appendChild(resetButton);
+    container.appendChild(resetButton)
 
     return [container, startButton, resetButton];
   }
@@ -853,22 +842,4 @@ export class Timer {
 
 
 
-/**
- * ============== Sample structure ================
- * <div class="timer-container timer-selected" tabindex="0">
-  <span class="timer-display timer-hidden"></span>
-  <span class="timer-digit timer-h">0</span>
-  <span class="timer-digit timer-h">0</span>
-  <span class="timer-unit timer-h">h</span>
-  <span class="timer-digit timer-m">0</span>
-  <span class="timer-digit timer-m">0</span>
-  <span class="timer-unit timer-m">m</span>
-  <span class="timer-digit timer-s">0</span>
-  <span class="timer-digit timer-s timer-active">0</span>
-  <span class="timer-unit timer-s">s</span>
-  <div class="timer-buttons-container">
-    <button class="timer-start-button timer-button" tabindex="-1">Start</button>
-    <button class="timer-reset-button timer-button" tabindex="-1">Reset</button>
-  </div>
-	</div>
- */
+export { Timer };

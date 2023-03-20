@@ -3,10 +3,10 @@ function isElement(obj) {
 }
 
 function stylesheetIncluded(fileName) {
-  const links = document.head.getElementsByTagName('link');
+  const links = document.head.getElementsByTagName("link");
 
   for (const link of links) {
-    let splitHref = link.getAttribute('href').split('/');
+    let splitHref = link.getAttribute("href").split("/");
     let fName = splitHref[splitHref.length - 1];
 
     if (fName === fileName) {
@@ -18,14 +18,14 @@ function stylesheetIncluded(fileName) {
 }
 
 function getRunningDirectory() {
-  let scripts = document.getElementsByTagName('script');
+  let scripts = document.getElementsByTagName("script");
   return scripts[scripts.length-1].src;
 }
 
 function linkStyleSheet(href) {
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('href', href);
+  const link = document.createElement("link");
+  link.setAttribute("rel", "stylesheet");
+  link.setAttribute("href", href);
   document.head.appendChild(link);
 }
 
