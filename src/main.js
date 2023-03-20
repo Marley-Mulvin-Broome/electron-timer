@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow } = require('electron');
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -6,15 +6,15 @@ const createWindow = () => {
     height: 600,
   });
 
-  win.loadFile("index.html");
+  win.loadFile('index.html');
 };
 
 app.whenReady().then(() => {
   createWindow();
 });
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
 });
 
 const METHODS = {
@@ -27,7 +27,7 @@ const METHODS = {
 
 const onMessage = async ({ msgId, cmd, args }) => {
   let method = METHODS[cmd];
-  if (!method) method = () => new Error("Invalid method: " + cmd);
+  if (!method) method = () => new Error('Invalid method: ' + cmd);
   try {
     const resolve = await method(...args);
     process.send({ msgId, resolve });
@@ -42,5 +42,5 @@ const onMessage = async ({ msgId, cmd, args }) => {
 };
 
 if (process.env.APP_TEST_DRIVER) {
-  process.on("message", onMessage);
+  process.on('message', onMessage);
 }
