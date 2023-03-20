@@ -8,7 +8,7 @@ if (!stylesheetIncluded('timer.css')) {
 
 const ONE_SECOND = 1000;
 
-class Timer {
+export class Timer {
   static STARTING_INDEX = 7;
 
   forceSelection = false;
@@ -39,7 +39,7 @@ class Timer {
    * @param {HTMLElement} parent Element that will be parent to the timer component
    * @param {tabindex} tabindex  The tab index this element has, -1 for none
    */
-  constructor(parent, tabindex=-1) {
+  constructor(tabindex=-1) {
     
     this.#container = document.createElement('div');
     this.#container.classList.add('timer-container');
@@ -90,8 +90,6 @@ class Timer {
       }
     );
 
-    parent.appendChild(this.#container);
-
     [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
       () => {
         if (!this.selected) {
@@ -123,6 +121,10 @@ class Timer {
     this.activateSpan(this.#selectedIndex);
 
     this.#hideSelected();
+  }
+
+  place(parent) {
+    parent.appendChild(this.#container);
   }
 
   /**
@@ -704,6 +706,14 @@ class Timer {
   }
 
   /**
+   * Sets the style attribute of the timer-container div to the provided string
+   * @param {String} styleString The string containg css styles
+   */
+  set style(styleString) {
+    this.#container.setAttribute('style', styleString);
+  }
+
+  /**
    * Whether the timer is selected or not
    */
   get selected() {
@@ -841,9 +851,6 @@ class Timer {
   }
 }
 
-
-
-export { Timer };
 
 
 /**
