@@ -12,6 +12,9 @@
 body {
     background-color: var(--dark-style-bg);
     font-family: "Roboto";
+
+    padding: 0;
+    margin: 0;
 }
 
 .add-timer-button {
@@ -27,7 +30,66 @@ body {
     border: 0;
 }
 
+.timers-container {
+    margin: 0;
+    width: 100%;
+}
+
 .add-timer-button:hover {
     cursor: pointer;
     background-color: #4fa2fc;
+}
+
+.remove-timer-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff4d4d;
+    color: white;
+    
+    align-self: stretch;
+    border: 0;
+    padding: 0;
+}
+
+.remove-timer-button:not(.remove-timer-button-off) {
+    font-size: 1.3em;
+    width: 40px;
+
+    /* transform: translateX(0px);
+    transition: transform 0.5s ease-out; */
+    transition: all 0.5s ease-out;
+}
+
+.remove-timer-button.remove-timer-button-off {
+    font-size: 0;
+    width: 0px;
+    /* transform: translateX(-40px);
+    transition: transform 0.5s ease-out; */
+    transition: all 0.5s ease-out;
+    /* transition: font-size 0.5s ease-out; */
+}
+
+.remove-timer-button:hover {
+    cursor: pointer;
+
+    box-shadow: 0px 0px 9px 3px rgba(255,77,77,0.58);
+    transition: all 0.5s ease-out;
+
+}
+
+.remove-timer-button:focus {
+    outline: none;
+}
+
+
+
+.split-container-container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: stretch;
+    justify-content:flex-start;
+
+    width: 100%;
 }

@@ -1,3 +1,4 @@
+import { ignoreTabIndex } from '../logic/utility.js';
 import { SplitContainer } from './SplitContainer.js';
 import { Timer } from './Timer.js';
 import { TimerSettings } from './TimerSettings.js';
@@ -13,6 +14,8 @@ export class MainApp {
   #selectedTimer;
 
   #addTimerButton;
+
+  #curMaxTabIndex = 0;
 
   constructor() {
     this.#children = [];
@@ -47,10 +50,13 @@ export class MainApp {
     }
 
     this.selectTimer(this.#children[0]);
-
   }
 
   feedKeyPress(key) {
+    if (document.activeElement.tagName === 'INPUT') {
+      return;
+    }
+
     if (this.#selectedTimer !== undefined) {
       this.#selectedTimer.feedKeyPress(key);
     }
@@ -72,9 +78,14 @@ export class MainApp {
   }
 
   addTimer() {
-    const timer = new Timer(this.#children.length);
+    const timer = new Timer(this.#curMaxTabIndex++);
     timer.style = 'margin-left: auto;';
-    const timerSettings = new TimerSettings(this.#children.length, `Timer ${this.#children.length}`);
+
+    //this.#addTimerButton.setAttribute('tabindex', this.#curMaxTabIndex);
+
+    const timerSettings = new TimerSettings(this.#curMaxTabIndex - 1, `Timer ${this.#curMaxTabIndex - 1}`);
+
+
 
     this.#children.push(timer);
 
@@ -88,10 +99,67 @@ export class MainApp {
 
 
     const splitContainer = new SplitContainer(timerSettings.container, timer.container, SPLIT_CONTAINER_LEFT, SPLIT_CONTAINER_RIGHT);
-    splitContainer.place(this.#timersContainer);
+    const splitContainerContainer = document.createElement('div');
+    
+    const removeTimerButton = document.createElement('button');
+    removeTimerButton.classList.add('remove-timer-button');
+    removeTimerButton.classList.add('remove-timer-button-off');
+    removeTimerButton.innerHTML = 'X';
+    removeTimerButton.onclick = () => {
+      this.removeTimer(timer, splitContainerContainer);
+    };
+
+    splitContainerContainer.classList.add('split-container-container');
+
+    splitContainerContainer.appendChild(removeTimerButton);
+    splitContainerContainer.onmouseenter = () => {
+      removeTimerButton.classList.remove('remove-timer-button-off');
+    };
+
+    splitContainerContainer.onmouseleave = () => {
+      removeTimerButton.classList.add('remove-timer-button-off');
+    };
+
+    splitContainer.place(splitContainerContainer);
     splitContainer.onclick = () => {
       this.selectTimer(timer);
     };
+
+    ignoreTabIndex(splitContainer.container);
+    ignoreTabIndex(splitContainerContainer);
+    ignoreTabIndex(removeTimerButton);
+
+    this.#timersContainer.appendChild(splitContainerContainer);
+  }
+
+  removeTimer(timer, container) {
+    if (typeof timer !== 'object') {
+      throw new Error('MainApp.removeTimer() expects a Timer object');
+    }
+
+    if (typeof container !== 'object') {
+      throw new Error('MainApp.removeTimer() expects a container object');
+    }
+
+    const index = this.#children.indexOf(timer);
+
+    if (index === -1) {
+      throw new Error('MainApp.removeTimer() could not find timer in children');
+    }
+
+    this.#children.splice(index, 1);
+
+    this.#timersContainer.removeChild(container);
+
+    if (this.#selectedTimer === timer) {
+      this.#selectedTimer = undefined;
+    }
+
+    if (this.#children.length === 0) {
+      this.addTimer();
+      this.selectTimer(this.#children[0]);
+    }
+
   }
 
   selectTimer(timer) {

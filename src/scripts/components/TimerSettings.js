@@ -1,4 +1,4 @@
-import { createCheckbox } from '../logic/utility.js';
+import { createCheckbox, ignoreTabIndex } from '../logic/utility.js';
 
 export class TimerSettings {
   #container;
@@ -69,6 +69,12 @@ export class TimerSettings {
         this.#container.appendChild(child);
       }
     }
+
+    ignoreTabIndex(this.#container);
+    ignoreTabIndex(this.#children.titleElement);
+    ignoreTabIndex(this.#children.loopContainer);
+    ignoreTabIndex(this.#children.intervalContainer);
+    ignoreTabIndex(this.#children.audioButton);
   }
 
   enableLoop() {
@@ -129,6 +135,8 @@ export class TimerSettings {
   #createLoopCheckbox() {
     const checkbox = createCheckbox('loop-checkbox' + this.#key);
 
+    ignoreTabIndex(checkbox);
+
     checkbox.onclick = () => {
       if (checkbox.checked) {
         this.enableLoop();
@@ -171,6 +179,8 @@ export class TimerSettings {
 
   #createIntervalCheckbox() {
     const checkbox = createCheckbox('interval-checkbox' + this.#key);
+
+    ignoreTabIndex(checkbox);
 
     checkbox.onclick = () => {
       if (checkbox.checked) {

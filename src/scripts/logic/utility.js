@@ -3,6 +3,10 @@ export function isElement(obj) {
 }
 
 export function stylesheetIncluded(fileName) {
+  if (typeof fileName !== 'string') {
+    throw new Error('stylesheetIncluded() expects a string');
+  }
+
   const links = document.head.getElementsByTagName('link');
 
   for (const link of links) {
@@ -23,6 +27,10 @@ export function getRunningDirectory() {
 }
 
 export function linkStyleSheet(href) {
+  if (typeof href !== 'string') {
+    throw new Error('linkStyleSheet() expects a string');
+  }
+
   const link = document.createElement('link');
   link.setAttribute('rel', 'stylesheet');
   link.setAttribute('href', href);
@@ -30,6 +38,10 @@ export function linkStyleSheet(href) {
 }
 
 export function createCheckbox(id) {
+  if (typeof id !== 'string') {
+    throw new Error('createCheckbox() expects a string');
+  }
+
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.checked = false;
@@ -53,6 +65,14 @@ export function disableScroll() {
 
 export function enableScroll() {
   document.body.style.overflow = 'auto';
+}
+
+export function ignoreTabIndex(element) {
+  if (!isElement(element)) {
+    throw new Error('ignoreTabIndex() expects an element');
+  }
+
+  element.setAttribute('tabindex', '-1');
 }
 
 

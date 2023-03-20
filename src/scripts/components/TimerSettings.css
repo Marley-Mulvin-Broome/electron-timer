@@ -54,6 +54,11 @@
 .timer-settings-loop-count {
     font-size: 1.3em;
     background-color: var(--dark-style-highlight);
-    width: 50px;
+    width: fit-content;
     border: 0;
+}
+
+timer-settings-loop-count:focus {
+    outline: none;
+    border: 1px var(--dark-style-highlight) solid;
 }
