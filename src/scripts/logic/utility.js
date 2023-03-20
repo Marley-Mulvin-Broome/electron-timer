@@ -1,13 +1,13 @@
-function isElement(obj) {
+export function isElement(obj) {
   return obj instanceof HTMLElement;
 }
 
-function stylesheetIncluded(fileName) {
+export function stylesheetIncluded(fileName) {
   const links = document.head.getElementsByTagName('link');
 
   for (const link of links) {
-    let splitHref = link.getAttribute('href').split('/');
-    let fName = splitHref[splitHref.length - 1];
+    const splitHref = link.getAttribute('href').split('/');
+    const fName = splitHref[splitHref.length - 1];
 
     if (fName === fileName) {
       return true;
@@ -17,12 +17,12 @@ function stylesheetIncluded(fileName) {
   return false;
 }
 
-function getRunningDirectory() {
+export function getRunningDirectory() {
   let scripts = document.getElementsByTagName('script');
   return scripts[scripts.length-1].src;
 }
 
-function linkStyleSheet(href) {
+export function linkStyleSheet(href) {
   const link = document.createElement('link');
   link.setAttribute('rel', 'stylesheet');
   link.setAttribute('href', href);
@@ -34,8 +34,48 @@ function linkStyleSheet(href) {
  * @param {any} value Value to check
  * @returns {Boolean} Whether the value is a number or not
  */
-function isNumber(value) {
+export function isNumber(value) {
   return !isNaN(value);
 }
 
-export { isElement, stylesheetIncluded, getRunningDirectory, linkStyleSheet, isNumber };
+export function disableScroll() {
+  document.body.style.overflow = 'hidden';
+}
+
+export function enableScroll() {
+  document.body.style.overflow = 'auto';
+}
+
+
+function preventDefaultForScrollKeys(e) {
+  if (keys[e.keyCode]) {
+    preventDefault(e);
+    return false;
+  }
+}
+
+// THIS CODE TAKEN FROM HERE https://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily
+
+// left: 37, up: 38, right: 39, down: 40,
+// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+const keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+function preventDefault(e) {
+  e.preventDefault();
+}
+
+const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+// call this to Disable
+export function disableScrollElegant() {
+  window.addEventListener(wheelEvent, preventDefault, { passive: false }); // modern desktop
+  window.addEventListener('touchmove', preventDefault, { passive: false }); // mobile
+  window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+
+// call this to Enable
+export function enableScrollElegant() {
+  window.removeEventListener(wheelEvent, preventDefault, { passive: false }); 
+  window.removeEventListener('touchmove', preventDefault, { passive: false });
+  window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+}
