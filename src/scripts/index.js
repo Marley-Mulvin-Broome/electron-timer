@@ -15,7 +15,7 @@ const timers = [];
 let selectedTimer = null;
 
 for (let i = 0; i < 10; i++) {
-  const timer = new Timer(i);
+  const timer = new Timer(i, i % 2 === 0);
   timer.style = 'margin-left: auto;';
   timers.push(timer);
 

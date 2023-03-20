@@ -29,7 +29,8 @@ export class Timer {
   #fullscreenButton;
   #fullscreen = false;
 
-  #buttonContainer;
+  #hasButtons;
+  #buttonContainer = undefined;
   #buttonStart;
   #buttonStop;
 
@@ -40,10 +41,13 @@ export class Timer {
    * @param {HTMLElement} parent Element that will be parent to the timer component
    * @param {tabindex} tabindex  The tab index this element has, -1 for none
    */
-  constructor(tabindex=-1) {
+  constructor(tabindex=-1, hasButtons=true, readonly=false) {
     
     this.#container = document.createElement('div');
     this.#container.classList.add('timer-container');
+
+    this.#hasButtons = hasButtons;
+    this.#readonly = readonly;
 
     // this.#fullscreenButton = document.createElement("button");
     // this.#fullscreenButton.classList.add("timer-fullscreen-button");
@@ -91,33 +95,7 @@ export class Timer {
       }
     );
 
-    [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
-      () => {
-        if (!this.selected) {
-          return;
-        }
-
-        if (!this.started) {
-          this.start();
-          return;
-        }
-
-        this.pause();
-      },
-      () => {
-        if (!this.selected) {
-          return;
-        }
-
-        if (this.started) {
-          this.stop();
-          return;
-        }
-
-        this.clearInput();
-      }
-    );
-    this.#container.appendChild(this.#buttonContainer);
+    this.#addButtons();
 
     this.activateSpan(this.#selectedIndex);
 
@@ -516,6 +494,48 @@ export class Timer {
 
     // this.#fullscreen = true;
     // this.#container.classList.add('timer-fullscreen');
+  }
+
+  startButton() {
+    if (!this.selected) {
+      return;
+    }
+
+    if (!this.started) {
+      this.start();
+      return;
+    }
+
+    this.pause();
+  }
+
+  stopButton() {
+    if (!this.selected) {
+      return;
+    }
+
+    if (this.started) {
+      this.stop();
+      return;
+    }
+
+    this.clearInput();
+  }
+
+  #addButtons() {
+    if (this.#buttonContainer !== undefined) {
+      this.#container.removeChild(this.#buttonContainer);
+    }
+
+    if (!this.#hasButtons)
+      return;
+
+    [this.#buttonContainer, this.#buttonStart, this.#buttonStop] = Timer.createButtons(
+      this.startButton.bind(this),
+      this.stopButton.bind(this)
+    );
+
+    this.#container.appendChild(this.#buttonContainer);
   }
 
   /**
