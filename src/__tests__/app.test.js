@@ -1,13 +1,11 @@
-import { expect, test, beforeAll, afterAll } from '@jest/globals';
-
-const electronPath = require('electron');
-const { TestDriver } = require('../testDriver');
+const electronPath = require("electron");
+const { TestDriver } = require("../testDriver");
 
 const app = new TestDriver({
   path: electronPath,
-  args: ['./'],
+  args: ["./"],
   env: {
-    NODE_ENV: 'test',
+    NODE_ENV: "test",
   },
 });
 
@@ -19,6 +17,6 @@ afterAll(() => {
   app.stop();
 });
 
-test('Test!!', () => {
+test("Test!!", () => {
   expect(1 + 1).toBe(2);
 });

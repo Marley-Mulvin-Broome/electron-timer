@@ -1,4 +1,4 @@
-const childProcess = require('child_process');
+const childProcess = require("child_process");
 
 class TestDriver {
   constructor({ path, args, env }) {
@@ -7,12 +7,12 @@ class TestDriver {
     // start child process
     env.APP_TEST_DRIVER = 1; // let the app know it should listen for messages
     this.process = childProcess.spawn(path, args, {
-      stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+      stdio: ["inherit", "inherit", "inherit", "ipc"],
       env,
     });
 
     // handle rpc responses
-    this.process.on('message', (message) => {
+    this.process.on("message", (message) => {
       // pop the handler
       const rpcCall = this.rpcCalls[message.msgId];
       if (!rpcCall) return;
@@ -23,8 +23,8 @@ class TestDriver {
     });
 
     // wait for ready
-    this.isReady = this.rpc('isReady').catch((err) => {
-      console.error('Application failed to start', err);
+    this.isReady = this.rpc("isReady").catch((err) => {
+      console.error("Application failed to start", err);
       this.stop();
       process.exit(1);
     });
