@@ -1,10 +1,17 @@
 const { app, BrowserWindow } = require('electron');
 
+const debug = false;
+
+if (require('electron-squirrel-startup')) app.quit();
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 650,
     height: 680,
   });
+
+  if (!debug)
+    win.removeMenu();
 
   win.loadFile('index.html');
 };
