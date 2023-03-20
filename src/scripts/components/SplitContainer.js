@@ -48,6 +48,10 @@ export class SplitContainer {
   get rightContent() {
     return this.#rightContent;
   }
+
+  set onclick(callback) {
+    this.#container.onclick = callback;
+  }
 }
 
 /**
