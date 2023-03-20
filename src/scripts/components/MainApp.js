@@ -12,6 +12,8 @@ export class MainApp {
 
   #selectedTimer;
 
+  #addTimerButton;
+
   constructor() {
     this.#children = [];
 
@@ -22,7 +24,15 @@ export class MainApp {
 
     this.addTimer();
 
+    this.#addTimerButton = document.createElement('button');
+    this.#addTimerButton.classList.add('add-timer-button');
+    this.#addTimerButton.innerHTML = '+';
+    this.#addTimerButton.onclick = () => {
+      this.addTimer();
+    };
+
     document.body.appendChild(this.#timersContainer);
+    document.body.appendChild(this.#addTimerButton);
   }
 
   get modalOpen() {
