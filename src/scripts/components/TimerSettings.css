@@ -1,0 +1,59 @@
+.timer-settings {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    row-gap: 10px;
+}
+
+.timer-settings-disabled {
+    opacity: 0.5;
+}
+
+.timer-settings h2 {
+    font-size: 2em;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    color: #FFF;
+}
+
+.timer-settings p, .timer-settings input, .timer-settings label {
+    color: #FFF;
+}
+
+.timer-settings-child:first-child {
+    width: 100%;
+}
+
+.timer-settings:not(:first-child) {
+    flex: 1;
+}
+.timer-settings label {
+    font-size: 1.3em;
+}
+
+.timer-settings-audio-button, .timer-settings-interval-button {
+    color: #FFF;
+    background-color: #ffb2ff;
+    border-radius: 5px;
+    border: 0px;
+
+    font-size: 1.3em;
+}
+
+.timer-settings-audio-button:hover {
+    cursor: pointer;
+}
+
+.timer-settings-interval-button:not(.timer-settings-disabled):hover {
+    cursor: pointer;
+}
+
+.timer-settings-loop-count {
+    font-size: 1.3em;
+    background-color: var(--dark-style-highlight);
+    width: 50px;
+    border: 0;
+}

@@ -32,7 +32,7 @@ export class SplitContainer {
     subContainer.classList.add('split-container-sub');
 
     subContainer.appendChild(content);
-    subContainer.setAttribute('style', `width: ${width};`);
+    subContainer.setAttribute('style', `flex: ${width};`);
 
     return subContainer;
   }
