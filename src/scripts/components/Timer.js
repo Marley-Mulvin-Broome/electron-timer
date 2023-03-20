@@ -24,6 +24,7 @@ export class Timer {
   #paused = false;
   #intervalObject = null;
   #displaySpan;
+  #readonly = false;
 
   #fullscreenButton;
   #fullscreen = false;
@@ -252,7 +253,7 @@ export class Timer {
    * Selects the timer index to the right of the currently selected one
    */
   selectNext() {
-    if (this.#selectedIndex === this.#spans.length) {
+    if (this.#selectedIndex === this.#spans.length || this.readonly) {
       return;
     }
 
@@ -263,7 +264,7 @@ export class Timer {
    * Selects the timer index to the left of the currently selected one
    */
   selectPrevious() {
-    if (this.#selectedIndex === 0) {
+    if (this.#selectedIndex === 0 || this.readonly) {
       return;
     }
 
@@ -439,6 +440,9 @@ export class Timer {
    * @param {(String|Number)} digit Digit to be inserted
    */
   insertDigit(digit) {
+    if (this.readonly)
+      return;
+
     this.#shiftLeft(this.#selectedIndex);
     this.#spans[this.#selectedIndex].innerText = digit;
   }
@@ -467,6 +471,9 @@ export class Timer {
    * Shifts the content of the input from left to right, using the currently selected index as an endpoint
    */
   backspace() {
+    if (this.readonly)
+      return;
+
     this.#shiftRight(this.#selectedIndex);
   }
 
@@ -711,6 +718,22 @@ export class Timer {
    */
   set style(styleString) {
     this.#container.setAttribute('style', styleString);
+  }
+
+  /**
+   * Sets the readonly attribute of the timer
+   * @param {Boolean} value Whether the timer is readonly or not
+   */
+  set readonly(value) {
+    this.#readonly = value;
+  }
+
+  /**
+   * Gets whether the timer is readonly
+   * @returns {Boolean} Whether the timer is readonly or not
+   */
+  get readonly() {
+    return this.#readonly;
   }
 
   /**
