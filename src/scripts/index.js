@@ -1,5 +1,17 @@
+import { Modal } from './components/Modal.js';
 import { SplitContainer } from './components/SplitContainer.js';
 import { Timer } from './components/Timer.js';
+
+const modalContent = document.createElement('div');
+
+for (let i = 0; i < 50; i++) {
+  const p = document.createElement('p');
+  p.innerText = 'Hello there!' + i;
+
+  modalContent.appendChild(p);
+}
+
+const modalTest = new Modal(modalContent);
 
 function selectTimer(timer) {
   if (selectedTimer !== null) {
@@ -27,7 +39,10 @@ for (let i = 0; i < 10; i++) {
     selectTimer(timers[i]);
   };
 
-  const leftContent = document.createElement('p');
+  const leftContent = document.createElement('button');
+  leftContent.onclick = () => {
+    modalTest.open();
+  };
   leftContent.innerText = 'Hello there!';
 
   const splitContainer = new SplitContainer(leftContent, timer.container, '20%', '50%');
@@ -41,4 +56,6 @@ window.addEventListener('keydown', (event) => {
   if (selectedTimer !== null) {
     selectedTimer.feedKeyPress(event.key);
   }
+
+  modalTest.feedKeyPress(event.key);
 });
