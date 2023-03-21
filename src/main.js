@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 
-const debug = false;
+const debug = true;
 
 if (require('electron-squirrel-startup')) app.quit();
 

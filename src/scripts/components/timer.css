@@ -52,7 +52,7 @@
     cursor: default;
 }
 
-.timer-selected:after {
+.timer-selected:not(.timer-progress):after {
     content: "";
     position: absolute;
     border-bottom: #ffb2ff 1px solid;
@@ -66,14 +66,14 @@
     animation-duration: 0.5s;
 }
 
-.timer-progress:before {
+.timer-progress:after {
     content: "";
     position: absolute;
     border-bottom: #ffb2ff 1px solid;
     
     bottom: 0;
     height: 15px;
-    width: 100%;
+    width: 5%;
     left: 0%;
 }
 

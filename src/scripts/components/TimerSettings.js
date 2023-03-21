@@ -13,6 +13,9 @@ export class TimerSettings {
   #loopLabel;
   #loopCheckbox;
   #loopCount;
+  
+  #targetTimer;
+  #audioMenu;
 
   #children = {
     titleElement: undefined,
@@ -21,7 +24,7 @@ export class TimerSettings {
     audioButton: undefined
   };
 
-  constructor(key, title='Untitled Timer') {
+  constructor(key, targetTimer, audioMenu, title='Untitled Timer') {
     if (typeof key !== 'number') {
       throw new Error('TimerSettings key must be a number');
     }
@@ -32,6 +35,8 @@ export class TimerSettings {
 
     this.#title = title;
     this.#key = key;
+    this.#targetTimer = targetTimer;
+    this.#audioMenu = audioMenu;
 
     this.#container = document.createElement('div');
     this.#container.classList.add('timer-settings');
@@ -75,6 +80,8 @@ export class TimerSettings {
     ignoreTabIndex(this.#children.loopContainer);
     ignoreTabIndex(this.#children.intervalContainer);
     ignoreTabIndex(this.#children.audioButton);
+
+
   }
 
   enableLoop() {
@@ -209,6 +216,10 @@ export class TimerSettings {
     button.classList.add('timer-settings-audio-button');
     button.id = 'audio-button' + this.#key;
     button.innerText = 'Set Audio';
+    button.onclick = () => {
+      this.#audioMenu.open();
+      this.#audioMenu.setTarget(this.#targetTimer);
+    };
 
     return button;
   }

@@ -1,0 +1,28 @@
+.audio-menu-header {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-top: 10px;
+    padding: 0;
+    text-align: center;
+    color: #FFF !important;
+}
+
+.audio-menu-add-audio-button {
+    width: 100%;
+    border: 0;
+    background-color: #3194ff;
+    color: #FFF;
+    border-radius: 5px;
+
+    font-size: 1.2em;
+
+    margin-bottom: 10px;
+
+    cursor: pointer;
+
+    transition: all 0.5s;
+}
+
+.audio-menu-add-audio-button:hover {
+    background-color: #4fa2fc;
+}   

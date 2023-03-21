@@ -75,6 +75,14 @@ export function ignoreTabIndex(element) {
   element.setAttribute('tabindex', '-1');
 }
 
+export function getFileName(path) {
+  if (typeof path !== 'string') {
+    throw new Error('getFileName() expects a string');
+  }
+
+  const splitPath = path.split('/');
+  return splitPath[splitPath.length - 1].split('.')[0];
+}
 
 function preventDefaultForScrollKeys(e) {
   if (keys[e.keyCode]) {

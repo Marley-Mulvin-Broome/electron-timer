@@ -149,6 +149,7 @@ export class Timer {
     this.hideSpans();
     this.#updateDisplay();
     this.#showDisplay();
+    // this.#showProgress();
     // start a countdown for every one second
     this.#intervalObject = setInterval(() => {
       if (this.#paused) {
@@ -196,6 +197,7 @@ export class Timer {
     // bring back all the spans
     this.showSpans();
     this.#hideDisplay();
+    // this.#hideProgress();
     // stop timer
     clearInterval(this.#intervalObject);
 
@@ -248,6 +250,11 @@ export class Timer {
 
     this.index = this.#selectedIndex - 1;
   }
+
+  setAudioSource(audioFile) {
+    this.#audioElement.src = audioFile;
+  }
+
 
   /**
    * Keeps the selected index on a span with a numerical value depending on the change between indexes
@@ -501,7 +508,7 @@ export class Timer {
       return;
     }
 
-    if (!this.started) {
+    if (!this.started) { 
       this.start();
       return;
     }
@@ -520,6 +527,15 @@ export class Timer {
     }
 
     this.clearInput();
+  }
+
+  #showProgress() {
+    const progressBar = window.getComputedStyle(this.#container, ':after');
+    progressBar.width = `${this.#runningTime.milliseconds / this.#storedTime.milliseconds * 100}%`;
+  }
+
+  #hideProgress() {
+    this.#container.classList.remove('timer-progress');
   }
 
   #addButtons() {
@@ -793,6 +809,17 @@ export class Timer {
 
   get container() {
     return this.#container;
+  }
+
+  get progress() {
+    if (!this.#started) {
+      return 0;
+    }
+
+    const startTime = this.#storedTime.milliseconds;
+    const currentTime = this.#runningTime.milliseconds;
+    
+    return currentTime / startTime;
   }
 
   /**

@@ -6,10 +6,7 @@ export class Modal {
 
   #modalOpen = false;
 
-  constructor(content) {
-    if (!isElement(content)) {
-      throw new Error('Modal content must be an element.');
-    }
+  constructor(allowKeyevent = false, content = undefined) {
 
     this.#modal = document.createElement('div');
     this.#modal.classList.add('modal');
@@ -17,12 +14,18 @@ export class Modal {
 
     this.#modalContent = document.createElement('div');
     this.#modalContent.classList.add('modal-content');
-    this.#modalContent.appendChild(content);
+    
+    if (content !== undefined) {
+      this.#modalContent.appendChild(content);
+    }
 
     this.#modal.appendChild(this.#modalContent);
 
     document.body.appendChild(this.#modal);
 
+    if (allowKeyevent) {
+      window.addEventListener('keydown', (event) => this.feedKeyPress(event.key));
+    }
   }
 
   open() {
@@ -34,7 +37,6 @@ export class Modal {
 
     this.#modalOpen = true;
     this.#modal.classList.remove('modal-off');
-
   }
 
   close() {
@@ -47,12 +49,19 @@ export class Modal {
     this.#modalOpen = false;
 
     this.#modal.classList.add('modal-off');
-
   }
 
   feedKeyPress(key) {
     if (key === 'Escape') {
       this.close();
     }
+  }
+
+  addContent(content) {
+    if (!isElement(content)) {
+      throw new Error('Modal content must be an element.');
+    }
+
+    this.#modalContent.appendChild(content);
   }
 }

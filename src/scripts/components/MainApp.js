@@ -2,6 +2,7 @@ import { ignoreTabIndex } from '../logic/utility.js';
 import { SplitContainer } from './SplitContainer.js';
 import { Timer } from './Timer.js';
 import { TimerSettings } from './TimerSettings.js';
+import { AudioMenu } from './AudioMenu.js';
 
 const SPLIT_CONTAINER_LEFT = '30%';
 const SPLIT_CONTAINER_RIGHT = '70%';
@@ -17,6 +18,8 @@ export class MainApp {
 
   #curMaxTabIndex = 0;
 
+  #audioMenu;
+
   constructor() {
     this.#children = [];
 
@@ -24,6 +27,12 @@ export class MainApp {
     this.#timersContainer.classList.add('timers-container');
 
     this.#selectedTimer = undefined;
+
+    this.#audioMenu = new AudioMenu();
+
+    this.#audioMenu.addAudioFile('timeraudio.mp3');
+    this.#audioMenu.addAudioFile('timeraudio.mp3');
+    this.#audioMenu.addAudioFile('timeraudio.mp3');
 
     this.addTimer();
 
@@ -53,16 +62,8 @@ export class MainApp {
   }
 
   feedKeyPress(key) {
-    if (document.activeElement.tagName === 'INPUT') {
-      return;
-    }
-
-    if (this.#selectedTimer !== undefined) {
+    if (this.#selectedTimer !== undefined && document.activeElement.tagName !== 'INPUT') {
       this.#selectedTimer.feedKeyPress(key);
-    }
-
-    if (key === 'Escape' && this.modalOpen) {
-      this.closeOpenModel();
     }
   }
 
@@ -70,7 +71,7 @@ export class MainApp {
     const openModel = document.querySelector('.modal:not(.modal-off)');
 
     if (openModel !== null) {
-      openModel.classList.add('modal-off');
+      openModel.click();
       return;
     }
 
@@ -83,9 +84,7 @@ export class MainApp {
 
     //this.#addTimerButton.setAttribute('tabindex', this.#curMaxTabIndex);
 
-    const timerSettings = new TimerSettings(this.#curMaxTabIndex - 1, `Timer ${this.#curMaxTabIndex - 1}`);
-
-
+    const timerSettings = new TimerSettings(this.#curMaxTabIndex - 1, timer, this.#audioMenu, 'Untitled Timer');
 
     this.#children.push(timer);
 
