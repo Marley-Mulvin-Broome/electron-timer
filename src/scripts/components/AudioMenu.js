@@ -53,9 +53,28 @@ export class AudioMenu extends Modal {
     this.addContent(this.#audioMenuHeader);
     this.addContent(this.#audioMenuBody);
     this.addContent(this.#audioMenuFooter);
+
+    this.loadFromExistingAudioFiles();
+  }
+
+  loadFromExistingAudioFiles() {
+    window.electronApi.getExistingAudioFiles().then((audioFiles) => {
+      audioFiles.forEach((audioFile) => {
+        this.addAudioFile(audioFile);
+      });
+    });
   }
 
   addAudioPrompt() {
+    window.electronApi.audioFilePrompt().then((fileLocation) => {
+      if (fileLocation) {
+        window.electronApi.loadAudioFile(fileLocation).then((newFileLocation) => {
+          if (newFileLocation) {
+            this.addAudioFile(newFileLocation);
+          }
+        });
+      }
+    });
   }
 
   addAudioFile(audioFile) {

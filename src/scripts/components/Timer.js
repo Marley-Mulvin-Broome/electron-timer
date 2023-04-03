@@ -405,6 +405,9 @@ export class Timer {
    * @param {String} key key property from event.key
    */
   feedKeyPress(key) {
+    if (this.started)
+      return;
+
     if (key === 'ArrowRight') {
       this.selectNext();
     } else if (key === 'ArrowLeft') {

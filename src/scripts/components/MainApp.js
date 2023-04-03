@@ -30,10 +30,6 @@ export class MainApp {
 
     this.#audioMenu = new AudioMenu();
 
-    this.#audioMenu.addAudioFile('timeraudio.mp3');
-    this.#audioMenu.addAudioFile('timeraudio.mp3');
-    this.#audioMenu.addAudioFile('timeraudio.mp3');
-
     this.addTimer();
 
     this.#addTimerButton = document.createElement('button');
