@@ -81,7 +81,20 @@ export class TimerSettings {
     ignoreTabIndex(this.#children.intervalContainer);
     ignoreTabIndex(this.#children.audioButton);
 
+    this.#children.titleElement.onclick = () => {
+      // add an input over the title element
+      const input = document.createElement('input');
+      input.classList.add('timer-title-input');
+      input.value = this.#title;
+      input.onblur = () => {
+        this.#title = input.value;
+        this.#children.titleElement.innerText = input.value;
+      };
 
+      this.#children.titleElement.innerText = '';
+      this.#children.titleElement.appendChild(input);
+      input.focus();
+    };
   }
 
   enableLoop() {
