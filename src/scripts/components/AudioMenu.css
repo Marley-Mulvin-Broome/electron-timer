@@ -25,4 +25,21 @@
 
 .audio-menu-add-audio-button:hover {
     background-color: #4fa2fc;
-}   
+}
+
+.audio-menu-close-button {
+    cursor: pointer;
+    background-color: #ff4d4d;
+    color: #FFF;
+    border-radius: 5px;
+    border: 0;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    width: 100%;
+
+    transition: all 0.5s;
+}
+
+.audio-menu-close-button:hover {
+    background-color: #ff6666;
+}

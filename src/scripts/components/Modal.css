@@ -29,4 +29,9 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.267);
 
     margin-top: 2%;
+
+    margin-left: 20%;
+    margin-right: 20%;
+
+    min-width: 50%;
 }

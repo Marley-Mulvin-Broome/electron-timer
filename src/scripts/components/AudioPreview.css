@@ -17,6 +17,7 @@
 
     transition: background-color 0.2s ease-in-out;
 
+    cursor: pointer;
 }
 
 .audio-preview:not(.audio-preview-selected):hover {
@@ -34,10 +35,21 @@
 .audio-preview p {
     margin-block-start: 0;
     margin-block-end: 0;
-
-    cursor: pointer;
 }
 
 .audio-preview-button {
     cursor: pointer;
+
+    background-color: transparent;
+    border: 0;
+
+    color: transparent;
+}
+
+.audio-preview-play-button {
+    background-image: url(../../img/playButton.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    position: relative;
 }
