@@ -15,8 +15,7 @@ export class AudioPreview {
   #audioFilePath;
   #audioName;
 
-  #playPauseButton;
-  #stopButton;
+
   #buttonsContainer;
 
   #progressInterval;
@@ -34,40 +33,32 @@ export class AudioPreview {
     this.#audioElement.loop = false;
     this.#audioElement.volume = 0.5;
 
-    this.#buttonsContainer = document.createElement('div');
-    this.#buttonsContainer.classList.add('audio-preview-buttons-container');
-
-    this.#playPauseButton = document.createElement('button');
-    this.#playPauseButton.classList.add('audio-preview-button');
-    this.#playPauseButton.innerHTML = 'P';
-    this.#playPauseButton.onclick = () => {
-      if (this.playing) {
-        this.pause();
-      } else {
-        this.play();
-      }
-    };
-
-    this.#stopButton = document.createElement('button');
-    this.#stopButton.classList.add('audio-preview-button');
-    this.#stopButton.innerHTML = 'S';
-    this.#stopButton.onclick = () => {
-      this.stop();
-    }; 
+    // this.#buttonsContainer = document.createElement('div');
+    // this.#buttonsContainer.classList.add('audio-preview-buttons-container');
 
     this.#container.appendChild(this.#audioName);
-    this.#buttonsContainer.appendChild(this.#playPauseButton);
-    this.#buttonsContainer.appendChild(this.#stopButton);
-    this.#container.appendChild(this.#buttonsContainer);
+    // this.#container.appendChild(this.#buttonsContainer);
 
-    this.#audioName.onclick = () => {
-      if (this.parent) {
-        this.parent.selectAudioPreview(this);
-        return;
+    this.#container.onclick = () => {
+      if (this.#selected) {
+        if (this.playing) {
+          this.stop();
+        } else {
+          this.play();
+        }
+      } else {
+        this.selectWithParent();
       }
-
-      this.toggleSelect();
     };
+  }
+
+  selectWithParent() {
+    if (this.parent) {
+      this.parent.selectAudioPreview(this);
+      return;
+    }
+
+    this.toggleSelect();
   }
 
   select() {
@@ -80,6 +71,8 @@ export class AudioPreview {
     this.#container.classList.remove('audio-preview-selected');
 
     this.#selected = false;
+
+    this.stop();
   }
 
   toggleSelect() {
