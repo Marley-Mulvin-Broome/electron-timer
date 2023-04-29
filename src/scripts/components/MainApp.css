@@ -17,6 +17,12 @@ body {
     margin: 0;
 }
 
+::selection {
+    background-color: #ffb2ff;
+    color: white;
+    box-shadow: var(--selection-box-shadow);
+}
+
 .add-timer-button {
     /* center this timer with a 5px border radius and bootstrap blue colour */
     background-color: #3194ff;
