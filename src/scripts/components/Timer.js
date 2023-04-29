@@ -6,6 +6,9 @@ if (!stylesheetIncluded('timer.css')) {
 }
 
 
+/**
+ * Second in milliseconds
+ */
 const ONE_SECOND = 1000;
 
 export class Timer {
