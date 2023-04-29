@@ -95,6 +95,14 @@ export class TimerSettings {
       this.#children.titleElement.appendChild(input);
       input.focus();
     };
+
+    const onLoopChange = () => {
+      targetTimer.setLoop(this.#loopCheckbox.checked, this.#loopCount.value);
+    };
+
+    this.#loopCheckbox.onchange = () => onLoopChange();
+
+    this.#loopCount.onchange = () => onLoopChange();
   }
 
   enableLoop() {

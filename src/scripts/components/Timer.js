@@ -29,6 +29,10 @@ export class Timer {
   #fullscreenButton;
   #fullscreen = false;
 
+  #loop = false;
+  #loopCount = 1;
+  #currentLoop = 0;
+
   #hasButtons;
   #buttonContainer = undefined;
   #buttonStart;
@@ -191,6 +195,20 @@ export class Timer {
       return;
     }
 
+    if (!suppressSound) {
+      if (this.#audioElement.currentTime !== 0) {
+        this.#audioElement.currentTime = 0;
+      }
+
+      this.#audioElement.play();
+    }
+
+    if (this.canLoop) {
+      this.#doLoop();
+      return;
+    }
+
+
     this.#buttonStart.innerText = 'Start';
     this.#buttonStop.innerText = 'Reset';
 
@@ -201,11 +219,8 @@ export class Timer {
     // stop timer
     clearInterval(this.#intervalObject);
 
-    if (!suppressSound) {
-      this.#audioElement.play();
-    }
-
     this.#started = false;
+    
   }
 
   /**
@@ -532,6 +547,11 @@ export class Timer {
     this.clearInput();
   }
 
+  setLoop(loop, loopCount = 1) {
+    this.#loop = loop;
+    this.#loopCount = loopCount;
+  }
+
   #showProgress() {
     const progressBar = window.getComputedStyle(this.#container, ':after');
     progressBar.width = `${this.#runningTime.milliseconds / this.#storedTime.milliseconds * 100}%`;
@@ -705,6 +725,14 @@ export class Timer {
     return time;
   }
 
+  #doLoop() {
+    this.#currentLoop++;
+
+    this.#runningTime.milliseconds = this.#storedTime.milliseconds;
+
+    this.#updateDisplay();
+  }
+
   /**
    * Sets the current selected span index
    * @param {Number} newIndex the new index to be set to
@@ -823,6 +851,10 @@ export class Timer {
     const currentTime = this.#runningTime.milliseconds;
     
     return currentTime / startTime;
+  }
+
+  get canLoop() {
+    return this.#loop && this.#currentLoop < this.#loopCount;
   }
 
   /**
