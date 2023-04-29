@@ -149,3 +149,26 @@ body {
 
     transition: all 0.3s;
 }
+
+/**
+ * scrollbar
+ */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #292c34;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #404757;
+    border-radius: 5px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffb2ff;
+}
