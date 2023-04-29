@@ -62,3 +62,15 @@ timer-settings-loop-count:focus {
     outline: none;
     border: 1px var(--dark-style-highlight) solid;
 }
+
+.timer-title-input {
+    font-size: 1em;
+    background-color: var(--dark-style-highlight);
+    width: 100%;
+    border: 0;
+}
+
+.timer-title-input:focus {
+    outline: none;
+    border: 1px var(--dark-style-highlight) solid;
+}
