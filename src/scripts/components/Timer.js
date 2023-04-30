@@ -1,5 +1,6 @@
 import { isElement, stylesheetIncluded, isNumber } from '../logic/utility.js';
 import { Time } from '../logic/Time.js';
+import { IntervalTimer } from '../logic/Interval.js';
 
 if (!stylesheetIncluded('timer.css')) {
   console.warn('Style sheet not loaded!!');
@@ -16,8 +17,10 @@ export class Timer {
 
   forceSelection = false;
 
-  #storedTime;
-  #runningTime;
+  // #storedTime;
+  // #runningTime;
+
+  #intervalTimer;
 
   #spans;
   #selectedIndex;
@@ -31,10 +34,6 @@ export class Timer {
 
   #fullscreenButton;
   #fullscreen = false;
-
-  #loop = false;
-  #loopCount = 1;
-  #currentLoop = 0;
 
   #hasButtons;
   #buttonContainer = undefined;
@@ -75,9 +74,8 @@ export class Timer {
     this.#audioElement.loop = false;
     this.#container.setAttribute('tabindex', tabindex);
     
-    this.#storedTime = new Time(0);
-    this.#runningTime = new Time(0);
-
+    this.#intervalTimer = new IntervalTimer(0, () => this.stop(), false, 1);
+    this.#intervalTimer.onNext = () => { this.#timerDone(); };
     
   
     for (let i = 0; i < 9; i++) {
@@ -148,10 +146,9 @@ export class Timer {
     this.#buttonStop.innerText = 'Stop';
     this.#buttonStart.innerText = 'Pause';
 
-    // set the initialTime to whatever is in the input
-    let curMilliseconds = this.time;
-    this.#storedTime.milliseconds = curMilliseconds;
-    this.#runningTime.milliseconds = curMilliseconds;
+    // set the time to the first interval
+    // let curMilliseconds = this.time;
+
     // change to the display
     this.hideSpans();
     this.#updateDisplay();
@@ -160,11 +157,6 @@ export class Timer {
     // start a countdown for every one second
     this.#intervalObject = setInterval(() => {
       if (this.#paused) {
-        return;
-      }
-
-      if (this.#runningTime.milliseconds === 0) {
-        this.stop(false);
         return;
       }
 
@@ -192,25 +184,13 @@ export class Timer {
    * Stops the timer completely
    * @param {Boolean} suppressSound whether to suppress the end timer audio
    */
-  stop(suppressSound = true) {
+  stop(suppressSound = false) {
     if (!this.started) {
       console.error('Error when stopping timer: cannot stop timer that has not been started');
       return;
     }
 
-    if (!suppressSound) {
-      if (this.#audioElement.currentTime !== 0) {
-        this.#audioElement.currentTime = 0;
-      }
-
-      this.#audioElement.play();
-    }
-
-    if (this.canLoop) {
-      this.#doLoop();
-      return;
-    }
-
+    this.#timerDone(suppressSound);
 
     this.#buttonStart.innerText = 'Start';
     this.#buttonStop.innerText = 'Reset';
@@ -439,6 +419,8 @@ export class Timer {
     } else if (isNumber(key)) {
       this.insertDigit(parseInt(key));
     }
+
+    this.#intervalTimer.currentIntervalValue = this.time;
   }
 
   /**
@@ -543,21 +525,33 @@ export class Timer {
     }
 
     if (this.started) {
-      this.stop();
+      this.stop(true);
       return;
     }
 
     this.clearInput();
   }
 
-  setLoop(loop, loopCount = 1) {
-    this.#loop = loop;
-    this.#loopCount = loopCount;
+  setLoop(loop, maxLoop = 1) {
+    this.#intervalTimer.loop = loop;
+    this.#intervalTimer.maxLoop = maxLoop;
+  }
+
+  #timerDone(suppressSound = false) {
+    if (!suppressSound) {
+      if (this.#audioElement.currentTime !== 0) {
+        this.#audioElement.currentTime = 0;
+      }
+
+      this.#audioElement.play();
+    }
+
+    // TODO: enable overlay object
   }
 
   #showProgress() {
     const progressBar = window.getComputedStyle(this.#container, ':after');
-    progressBar.width = `${this.#runningTime.milliseconds / this.#storedTime.milliseconds * 100}%`;
+    progressBar.width = `${this.#intervalTimer.currentTime / this.#intervalTimer.currentStartTime * 100}%`;
   }
 
   #hideProgress() {
@@ -592,7 +586,7 @@ export class Timer {
   }
 
   #countdown() {
-    this.#runningTime.milliseconds -= ONE_SECOND;
+    this.#intervalTimer.doTick();
   }
 
   #toggleDisplay() {
@@ -608,7 +602,7 @@ export class Timer {
     let time = timeObject;
 
     if (time === undefined) {
-      time = this.#runningTime;
+      time = this.#intervalTimer.time;
     }
 
     this.formatDisplayElement(time);
@@ -728,14 +722,6 @@ export class Timer {
     return time;
   }
 
-  #doLoop() {
-    this.#currentLoop++;
-
-    this.#runningTime.milliseconds = this.#storedTime.milliseconds;
-
-    this.#updateDisplay();
-  }
-
   /**
    * Sets the current selected span index
    * @param {Number} newIndex the new index to be set to
@@ -850,14 +836,8 @@ export class Timer {
       return 0;
     }
 
-    const startTime = this.#storedTime.milliseconds;
-    const currentTime = this.#runningTime.milliseconds;
     
-    return currentTime / startTime;
-  }
-
-  get canLoop() {
-    return this.#loop && this.#currentLoop < this.#loopCount;
+    return this.#intervalTimer.currentTime / this.#intervalTimer.currentStartTime;
   }
 
   /**

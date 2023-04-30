@@ -47,7 +47,7 @@ export class Time {
    */
   set milliseconds(value) {
     if (value >= 604800000) {
-      throw RangeError(`${value} is too large a number for this datastructure to hanndle.`);
+      throw RangeError(`${value} is too large a number for this datastructure to handle.`);
     }
 
     if (value < 0) {
@@ -172,3 +172,5 @@ export class Time {
     return Time.convert(value, Time.CONVERT_DIRECTION.biggerUnit, Time.UNIT_SECOND, unit);
   }
 }
+
+export const ONE_SECOND = 1000;

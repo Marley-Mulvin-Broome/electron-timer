@@ -69,7 +69,8 @@ ipcMain.handle('get-existing-audio-files', () => {
   if (!fs.existsSync(AUDIO_FOLDER)) return [];
 
   const files = fs.readdirSync(AUDIO_FOLDER);
-  return files;
+
+  return files.map(file => AUDIO_FOLDER + '/' + file);
 });
 
 const METHODS = {
