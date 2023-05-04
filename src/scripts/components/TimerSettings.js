@@ -1,4 +1,5 @@
 import { createCheckbox, ignoreTabIndex } from '../logic/utility.js';
+import { IntervalMenu } from '../components/IntervalMenu.js';
 
 export class TimerSettings {
   #container;
@@ -7,12 +8,12 @@ export class TimerSettings {
 
   #key;
 
-  #intervalLabel;
-  #intervalCheckbox;
   #intervalButton;
   #loopLabel;
   #loopCheckbox;
   #loopCount;
+
+  #intervalMenu;
   
   #targetTimer;
   #audioMenu;
@@ -54,14 +55,10 @@ export class TimerSettings {
 
     this.#children.intervalContainer = this.#createIntervalContainer();
 
-    this.#intervalLabel = this.#createIntervalLabel();
-
-    this.#intervalCheckbox = this.#createIntervalCheckbox();
-
     this.#intervalButton = this.#createIntervalButton();
 
-    this.#children.intervalContainer.appendChild(this.#intervalLabel);
-    this.#children.intervalContainer.appendChild(this.#intervalCheckbox);
+    
+
     this.#children.intervalContainer.appendChild(this.#intervalButton);
 
     this.#children.audioButton = this.#createAudioButton();
@@ -115,18 +112,6 @@ export class TimerSettings {
     this.#loopCheckbox.checked = false;
     this.#loopCount.disabled = true;
     this.#loopCount.classList.add('timer-settings-disabled');
-  }
-
-  enableInterval() {
-    this.#intervalCheckbox.checked = true;
-    this.#intervalButton.disabled = false;
-    this.#intervalButton.classList.remove('timer-settings-disabled');
-  }
-
-  disableInterval() {
-    this.#intervalCheckbox.checked = false;
-    this.#intervalButton.disabled = true;
-    this.#intervalButton.classList.add('timer-settings-disabled');
   }
 
   get container() {
@@ -197,37 +182,16 @@ export class TimerSettings {
     return container;
   }
 
-  #createIntervalLabel() {
-    const label = document.createElement('label');
-    label.innerText = 'Interval';
-    label.htmlFor = 'interval-checkbox' + this.#key;
-
-    return label;
-  }
-
-  #createIntervalCheckbox() {
-    const checkbox = createCheckbox('interval-checkbox' + this.#key);
-
-    ignoreTabIndex(checkbox);
-
-    checkbox.onclick = () => {
-      if (checkbox.checked) {
-        this.enableInterval();
-      } else {
-        this.disableInterval();
-      }
-    };
-
-    return checkbox;
-  }
-
   #createIntervalButton() {
     const button = document.createElement('button');
     button.id = 'interval-button' + this.#key;
     button.innerText = 'Set Interval';
-    button.disabled = true;
     button.classList.add('timer-settings-interval-button');
-    button.classList.add('timer-settings-disabled');
+    this.#intervalMenu = new IntervalMenu(document.body);
+
+    button.onclick = () => {
+      this.#intervalMenu.show(this.#targetTimer.intervals);
+    };
 
     return button;
   }

@@ -840,6 +840,10 @@ export class Timer {
     return this.#intervalTimer.currentTime / this.#intervalTimer.currentStartTime;
   }
 
+  get intervals() {
+    return this.#intervalTimer.intervals;
+  }
+
   /**
    * Creates a span element used within the timer component
    * @param {Boolean} isValue whether the new span holds a numberical value or a unit indicator string

@@ -1,0 +1,16 @@
+
+.interval-menu {
+    position: absolute;
+    z-index: 50;
+    left: 10px;
+    top: 2%;
+    bottom: 2%;
+
+    width: 50%;
+    height: 96%;
+
+    background-color: var(--dark-style-bg);
+    border-radius: 5px;
+    box-shadow: var(--selection-box-shadow);
+}
+
